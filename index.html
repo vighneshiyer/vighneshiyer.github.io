@@ -666,8 +666,8 @@ val queueTest: Command[Boolean] = for {
 
           <section>
             <h3>Conclusion</h3>
-            <p class="fragment">Encoding simulation commands as values enables a fast interpreter using only 1 thread.</p>
-            <p class="fragment">Fastest open-source RTL testbench API (over cocotb and chiseltest) with simulation threading support.</p>
+            <p class="fragment">Encoding simulation commands as values enables a fast runtime using only 1 thread.</p>
+            <p class="fragment">Fastest general-purpose testbench API with simulation threading support.</p>
             <div class="fragment">
               <p>Coming up:</p>
               <ul class="small">
@@ -681,6 +681,128 @@ val queueTest: Command[Boolean] = for {
             <p class="fragment"><a href="https://github.com/vighneshiyer/simcommand">github.com/vighneshiyer/simcommand</a></p>
           </section>
 
+        </section>
+
+        <section>
+          <section>
+            <h3>Discussion</h3>
+          </section>
+
+          <section>
+            <h3>Better Benchmarks?</h3>
+            <p>Requirements:</p>
+            <ul>
+              <li>Simple (but large), single-clock blob of Verilog RTL</li>
+              <li>Simple top-level IOs for VIP implementation</li>
+              <li>Simple checker</li>
+              <li>Long running test with simple stimulus generation</li>
+            </ul>
+            <p class="fragment">Ideas: BaseTile (Rocket/BOOM), NoC</p>
+            <p class="fragment">Also: measure # threads vs throughput</p>
+          </section>
+
+          <section>
+            <h3>How to Improve Performance?</h3>
+            <ul>
+              <li>Imperative interpreter with internal mutable state</li>
+              <li>FFI overhead to Verilator .so using JNI vs JNA</li>
+              <li>Skip through cycles of no IO activity</li>
+            </ul>
+            <p class="fragment">Q: what is the overhead of UVM over baseline SV?</p>
+            <p class="fragment">Q: when profiling a typical block-level simulation, where is time spent?</p>
+          </section>
+
+          <section>
+            <h3>Attaching Verification Collateral</h3>
+            <ul>
+              <li>Top-level monitors</li>
+              <li>Internal bus monitors (TileLink, Decoupled, Irrevocable)</li>
+              <li>Golden models</li>
+            </ul>
+            <div class="fragment">
+              <p>Q: how are internal bus monitors usually implemented?</p>
+              <p class="small">(RTL, SV models with binds) (separate read-only thread?)</p>
+            </div>
+          </section>
+
+          <section>
+            <h3>How to Handle Race Conditions</h3>
+            <h4>Same Port Races</h4>
+            <div class="container fragment">
+              <div class="col">
+                <pre><code class="language-scala small" data-trim data-noescape>
+  def enqueue(data: T) = for {
+    _ <- poke(io.bits, data)
+    _ <- poke(io.valid, true.B)
+    _ <- waitUntil(io.ready, true.B)
+    _ <- step(1)
+    _ <- poke(io.valid, false.B)
+  } yield ()
+                </pre></code>
+              </div>
+              <div class="col">
+                <pre><code class="language-scala small" data-trim data-noescape>
+  def dequeue() = for {
+    _ <- waitForValue(io.valid, true.B)
+    _ <- poke(io.ready, true.B)
+    value <- peek(io.bits)
+    _ <- step(1)
+  } yield value
+                </pre></code>
+              </div>
+            </div>
+            <p class="fragment small">When both of these are used on a single port to drive and monitor, there is a race</p>
+            <p class="fragment small">SV resolves this using blocking vs non-blocking assigns and reads</p>
+            <p class="fragment">Q: is having a 'monitor' region the right approach?</p>
+          </section>
+
+          <section>
+            <h3>Schedulers</h3>
+            <div class="container">
+              <div class="col">
+                <img src="figs/systemverilog_scheduling_semantics.png" />
+              </div>
+              <div class="col">
+                <ul class="small">
+                  <li>Active region: Execute all blocking and continuous assignments</li>
+                  <li>NBA region: Execute all non-blocking assignments (FF + testbench code)</li>
+                  <li>Observed region: Evaluate concurrent assertions</li>
+                  <li>Reactive region: Evaluate program blocks</li>
+                </ul>
+              </div>
+            </div>
+            <p class="fragment">Q: Is this complexity necessary? Can it be generalized?</p>
+          </section>
+
+          <section>
+            <h3>How to Handle Race Conditions</h3>
+            <h4>Comb Loop Races</h4>
+            <img src="figs/comb_loop_race.svg" />
+            <p class="fragment">Thread order determines behavior - unspecified in SystemVerilog</p>
+            <p class="fragment small">How often does this occur in practice? How is it resolved?</p>
+          </section>
+
+          <section>
+            <h3>DUT Interaction Methods</h3>
+            <p>RTL Transactors vs C++ cycle-by-cycle drivers vs SV VIPs</p>
+            <ul>
+              <li class="fragment">Q: When are each of them used?</li>
+              <li class="fragment">Q: What are the limitations of transactors?</li>
+              <li class="fragment">Q: Is there a unified way to design them?</li>
+              <li class="fragment">Q: Are the transactions portable?</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Hardware Modeling</h3>
+            <p>Can the same constructs used for testbenches be used for hardware modeling?</p>
+            <p class="small">SystemC uses modules, channels / ports, events, and processes</p>
+            <ul>
+              <li class="fragment">Q: Is SystemC often used as testbench top vs SystemVerilog?</li>
+              <li class="fragment">Q: What are the benefits for unifying hardware modeling and testbench code?</li>
+              <li class="fragment">Q: Can a subset of SystemC code be turned into a formal transaction-level model?</li>
+            </ul>
+          </section>
         </section>
       </div>
     </div>
