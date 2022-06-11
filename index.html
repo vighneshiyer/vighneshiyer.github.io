@@ -784,7 +784,7 @@ val queueTest: Command[Boolean] = for {
 
           <section>
             <h3>DUT Interaction Methods</h3>
-            <p>RTL Transactors vs C++ cycle-by-cycle drivers vs SV VIPs</p>
+            <p>SV/SystemC VIPs vs RTL Transactors vs C++ cycle-by-cycle drivers</p>
             <ul>
               <li class="fragment">Q: When are each of them used?</li>
               <li class="fragment">Q: What are the limitations of transactors?</li>
@@ -794,13 +794,24 @@ val queueTest: Command[Boolean] = for {
           </section>
 
           <section>
+            <h4>Unification of SW VIPs, HW Transactors, and FV Input Constraints</h4>
+            <ul>
+              <li class="fragment">Q: What is the perf overhead of SW VIPs vs RTL transactors?</li>
+              <li class="fragment">Q: What are the common primitives needed to express VIP behavior? Can they all be expressed in SystemC?</li>
+              <li class="fragment">Q: Is HLS used in practice to write SW VIPs that can be compiled into RTL transactors?</li>
+              <li class="fragment">Q: Is there a way of formally analyzing the behavior of SV VIPs?</li>
+            </ul>
+          </section>
+
+          <section>
             <h3>Hardware Modeling</h3>
             <p>Can the same constructs used for testbenches be used for hardware modeling?</p>
             <p class="small">SystemC uses modules, channels / ports, events, and processes</p>
-            <ul>
+            <ul class="small">
               <li class="fragment">Q: Is SystemC often used as testbench top vs SystemVerilog?</li>
               <li class="fragment">Q: What are the benefits for unifying hardware modeling and testbench code?</li>
               <li class="fragment">Q: Can a subset of SystemC code be turned into a formal transaction-level model?</li>
+              <li class="fragment">Q: Can you "swap in/out" RTL and SystemC models in a SoC-level sim?</li>
             </ul>
           </section>
         </section>
