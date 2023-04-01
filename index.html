@@ -206,8 +206,8 @@ test(new Queue(UInt(8.W), 4)) { c =>
 
           <section>
             <h3>Conclusion</h3>
-            <p class="fragment small">SimCommand makes writing system-level tests using Scala viable.</p>
-            <p class="fragment small">This technique is applicable to testbench APIs in other host languages.</p>
+            <p class="fragment small">Writing system-level tests using Scala is viable</p>
+            <p class="fragment small">Ideas from SimCommand are applicable to testbench APIs in other host languages</p>
             <div class="fragment">
               <p>More stuff:</p>
               <ul class="small">
@@ -243,7 +243,7 @@ test(new Queue(UInt(8.W), 4)) { c =>
         // Learn about plugins: https://revealjs.com/plugins/
         plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
       });
-      Reveal.configure({ pdfSeparateFragments: false });
+      Reveal.configure({ pdfSeparateFragments: true, pdfMaxPagesPerSlide: 1 });
     </script>
   </body>
 </html>
