@@ -12,8 +12,8 @@
   margin-top: 1rem !important;
 }
 </style>
-    <script type="module" crossorigin src="/assets/2024_01-slice_winter-tidalsim-ddea4b1b.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/reveal.esm-cde48b62.js">
+    <script type="module" crossorigin src="/assets/2024_01-slice_winter-tidalsim-6158b99b.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/reveal.esm-166c8314.js">
     <link rel="stylesheet" href="/assets/reveal-9088ee32.css">
     <link rel="stylesheet" href="/assets/remark-ish-d5a15852.css">
   </head>
@@ -25,7 +25,7 @@
         <div class="slides">
             <section class="center">
   <h1>TidalSim: Multi-Level Microarchitecture Simulation</h1>
-  <h3 style="font-weight: 500;">Vighnesh Iyer, Raghav Gupta, Dhruv Vaish, Charles Hong, Young-Jin Park, Bora Nikolic, Sophia Shao</h3>
+  <h3 style="font-weight: 500;">Vighnesh Iyer, Raghav Gupta, Dhruv Vaish, Charles Hong, Young-Jin Park, Sophia Shao, Bora Nikolic</h3>
   <h3 style="font-weight: normal;">SLICE Winter Retreat 2024</h3>
   <h4 style="font-weight: normal;">Wednesday, January 10th, 2024</h4>
 </section>
@@ -476,7 +476,7 @@ cycles,instret
     <h2>Results</h2>
   </section>
 
-  <section>
+  <section data-visibility="hidden">
     <h2>Clustering on Embench Benchmarks</h2>
     <ul>
       <li class="fragment">Cluster centroids indicate which basic blocks are traversed most frequently in each cluster</li>
@@ -548,7 +548,7 @@ cycles,instret
     </div>
   </section>
 
-  <section>
+  <section data-visibility="hidden">
     <h2>Dealing with Long-Lived μArch State</h2>
 
     <div class="container" style="grid-template-columns: 1fr 1fr;">
@@ -591,6 +591,7 @@ cycles,instret
     <li class="fragment">We propose <strong>TidalSim</strong>, a multi-level simulation methodology to enable rapid HW iteration</li>
   </ul>
   <p class="small center fragment"><a href="https://github.com/euphoric-hardware/tidalsim">TidalSim (github.com/euphoric-hardware/tidalsim)</a> <small>Forks of spike, chipyard, testchipip + top-level runner</small></p>
+  <!--<p class="small">Acknowledgements: Joonho Whangbo, Seah Kim</p>-->
   </div>
   <div style="display:grid; align-content: center; position: relative; top: -12%;">
     <img width="80%" src="/assets/overview-cbf37909.svg" />
