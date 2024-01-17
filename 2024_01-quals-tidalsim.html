@@ -49,13 +49,11 @@
     <li class="fragment"><strong>What</strong>: What is the thing I want to build?</li>
     <li class="fragment"><strong>Prior work</strong> + <strong>what's new</strong> about my proposal?</li>
     <li class="fragment"><strong>How (pt 1)</strong>: A prototype implementation of my proposal</li>
-    <li class="fragment"><strong>Case studies</strong> / <strong>applications</strong>: How will we use what we built to do something that was impossible before?</li>
-    <li class="fragment"><strong>How (pt 2)</strong>: Addressing faults of and generalizing the prototype
-      <ul style="font-size: 1.4rem;">
-        <li>Each point roughly corresponds to a thesis chapter</li>
-      </ul>
-    </li>
-    <li class="fragment"><strong>Thesis outline</strong> and paper plan</li>
+    <hr>
+    <li class="fragment"><strong>Case studies</strong> / <strong>applications</strong>: Using TidalSim for performance optimization and verification</li>
+    <!--How will we use what we built to do something that was impossible before?</li>-->
+    <li class="fragment"><strong>How (pt 2)</strong>: New contributions to sampled simulation methodology</li>
+    <li class="fragment"><strong>Thesis outline</strong><!-- and paper plan --></li>
   </ol>
 </section>
 
@@ -396,37 +394,37 @@
     <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
       <h3 class="center">Industry</h3>
       <img src="/assets/industry_flow2-a1db5892.svg" height="100%" />
-      <figcaption class="center">RTL performance validation is too costly.</figcaption>
+      <figcaption style="margin-top: 1rem;" class="center">RTL performance validation is too costly.</figcaption>
     </div>
 
     <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
       <h3 class="center">Industry</h3>
       <img src="/assets/industry_flow_new-8102fd45.svg" height="100%" />
-      <figcaption class="center">Rapid RTL performance validation becomes viable.</figcaption>
+      <figcaption style="margin-top: 1rem;" class="center">Rapid RTL performance validation becomes viable.</figcaption>
     </div>
 
     <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
       <h3 class="center">Academia</h3>
       <img src="/assets/academic_flow-5c27066c.svg" height="100%" />
-      <figcaption class="center">Academics resort to inaccurate uArch simulators.</figcaption>
+      <figcaption style="margin-top: 1rem;" class="center">Academics resort to inaccurate uArch simulators.</figcaption>
     </div>
 
     <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
       <h3 class="center">Academia</h3>
       <img src="/assets/academic_flow_new-02d53047.svg" height="100%" />
-      <figcaption>RTL-first evaluation strategy becomes viable.</figcaption>
+      <figcaption style="margin-top: 1rem;">RTL-first evaluation strategy becomes viable.</figcaption>
     </div>
 
     <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
       <h3 class="center">Startup / Lean Team</h3>
       <img src="/assets/startup_flow2-ac8b0d6b.svg" height="100%" />
-      <figcaption>No rapid performance evaluation strategy for RTL.</figcaption>
+      <figcaption style="margin-top: 1rem;">No rapid performance evaluation strategy for RTL.</figcaption>
     </div>
 
     <div class="fragment fade-in" style="display: grid; place-items: center; width: 80%;">
       <h3 class="center">Startup / Lean Team</h3>
       <img src="/assets/startup_flow_new-62c412a7.svg" height="100%" />
-      <figcaption>RTL-first design strategy becomes viable.</figcaption>
+      <figcaption style="margin-top: 1rem;">RTL-first design strategy becomes viable.</figcaption>
     </div>
   </div>
 
@@ -449,7 +447,7 @@
     <li class="fragment">Implementation of TidalSim</li>
     <li class="fragment">Evaluation of TidalSim for performance estimation on realistic and large workloads
       <ul style="font-size: 1.4rem;">
-        <li>Embench, GAP, SPEC, HyperProtoBench, MLPerf, CloudSuite</li>
+        <li>Embench, SPEC, HyperProtoBench, HyperCompressBench</li>
       </ul>
     </li>
     <li class="fragment">Case studies for hardware DSE and coverpoint synthesis</li>
@@ -1489,23 +1487,12 @@ Because simulators can have significant errors, which are completely unknown, on
 </section>
 
 <section>
-  <h2>IPC Trace Prediction: aha-mont64</h2>
-  <ul>
-    <li class="fragment">Montgomery multiplication from Embench (aha-mont64)</li>
-    <li class="fragment"><code>N=1000</code>, <code>C=12</code></li>
-    <li class="fragment">Full RTL sim takes 10 minutes, TidalSim runs in 10 seconds</li>
-    <li class="fragment">IPC is correlated (mean error &lt;5%)<!--; very weak correlation between distance and error--></li>
-  </ul>
-  <img class="fragment" src="/assets/aha-mont64_results-9a84d301.svg" />
-</section>
-
-<section>
   <h2>IPC Trace Prediction: huffbench</h2>
   <ul>
     <li class="fragment">Huffman compression from Embench (huffbench)</li>
     <li class="fragment"><code>N=10000</code>, <code>C=18</code></li>
     <li class="fragment">Full RTL sim takes 15 minutes, TidalSim runs in 10 seconds</li>
-    <li class="fragment">Larger IPC variance</li>
+    <li class="fragment">Large IPC variance</li>
   </ul>
   <img class="fragment" src="/assets/huffbench_results-4c2e2b24.svg" />
 </section>
@@ -1528,31 +1515,6 @@ Because simulators can have significant errors, which are completely unknown, on
     <img src="/assets/embench_ipc_error-525b1b52.svg" style="margin-bottom:0;" />
   </div>
   <p class="center fragment">Typical IPC error (<strong>without</strong> functional warmup and with fine time-domain precision of 10k instructions) <strong>is &lt; 5%</strong></p>
-</section>
-
-<section>
-  <h2>From Tidalsim v0.1 to v1</h2>
-
-  <!-- Things to do before calling the first prototype complete: -->
-
-  <ul>
-    <li class="fragment">Functional L1-only cache warmup</li>
-    <li class="fragment">Functional branch predictor warmup</li>
-    <!--<li class="fragment">Use robust checkpointing fork of spike
-      <ul>
-        <li>Better arch state initialization technique <span class="small">(via program snippet + selective forces depending on bits that can't be set via ISA)</span></li>
-      </ul>
-    </li>-->
-    <li class="fragment">Characterization on other baremetal workloads
-      <ul>
-        <li>dhrystone, coremark, riscv-tests benchmarks, MiBench</li>
-      </ul>
-    </li>
-    <li class="fragment">Explore more sophisticated clustering and extrapolation techniques</li>
-    <li class="fragment">Demonstrate we can hit <strong>&lt;1% IPC error</strong></li>
-  </ul>
-
-  <p class="fragment center">These milestones will set the stage for the qual proposal</p>
 </section>
 
 <section class="center">
@@ -1722,6 +1684,42 @@ cycles,instret
       </ul>
     <li class="fragment">Compute the estimated performance of all intervals to extrapolate to a full performance trace</li>
   </ul>
+</section>
+
+<section>
+  <h2>IPC Trace Prediction: aha-mont64</h2>
+  <ul>
+    <li class="fragment">Montgomery multiplication from Embench (aha-mont64)</li>
+    <li class="fragment"><code>N=1000</code>, <code>C=12</code></li>
+    <li class="fragment">Full RTL sim takes 10 minutes, TidalSim runs in 10 seconds</li>
+    <li class="fragment">IPC is correlated (mean error &lt;5%)<!--; very weak correlation between distance and error--></li>
+  </ul>
+  <img class="fragment" src="/assets/aha-mont64_results-9a84d301.svg" />
+</section>
+
+<section>
+  <h2>From Tidalsim v0.1 to v1</h2>
+
+  <!-- Things to do before calling the first prototype complete: -->
+
+  <ul>
+    <li class="fragment">Functional L1-only cache warmup</li>
+    <li class="fragment">Functional branch predictor warmup</li>
+    <!--<li class="fragment">Use robust checkpointing fork of spike
+      <ul>
+        <li>Better arch state initialization technique <span class="small">(via program snippet + selective forces depending on bits that can't be set via ISA)</span></li>
+      </ul>
+    </li>-->
+    <li class="fragment">Characterization on other baremetal workloads
+      <ul>
+        <li>dhrystone, coremark, riscv-tests benchmarks, MiBench</li>
+      </ul>
+    </li>
+    <li class="fragment">Explore more sophisticated clustering and extrapolation techniques</li>
+    <li class="fragment">Demonstrate we can hit <strong>&lt;1% IPC error</strong></li>
+  </ul>
+
+  <p class="fragment center">These milestones will set the stage for the qual proposal</p>
 </section></section>
 
 <section>
@@ -1751,17 +1749,18 @@ cycles,instret
 
   <ul>
     <li class="fragment"><!--Evaluate the impact of cache sizing and configuration-->
-      Potential microarchitectural knobs to explore
+      Microarchitectural knobs to explore
       <ul>
-        <li>Cache sizing between L1d and L1i</li>
+        <!--<li>Cache sizing between L1d and L1i</li>
         <li>Balancing capacity between 2-level cache hierarchies</li>
-        <!--<li>Unified vs separate I/D L2 caches</li>-->
+        <li>Unified vs separate I/D L2 caches</li>
         <li>Tuning cache associativity or replacement policy</li>
-        <li>Branch predictor parameters (e.g. fine-tuning BTB entries)</li>
+        <li>Branch predictor parameters (e.g. fine-tuning BTB entries)</li>-->
+        <li>Prefetcher tuning<sup>[1]</sup></li>
       </ul>
     <li class="fragment">Workloads for tuning
       <ul>
-        <li>HyperProtoBench</li>
+        <li>HyperCompressBench (baremetal), HyperProtoBench (Linux)</li>
       </ul>
     </li>
     <li class="fragment">Expected results
@@ -1772,13 +1771,27 @@ cycles,instret
       </ul>
     </li>
   </ul>
+
+  <blockquote class="fragment smallish">
+Many of Arm's efficiency gains come from small, microarchitectural level changes, mostly around how it implements data prefetch and branch prediction.
+  </blockquote>
+
+  <div>
+    <hr>
+    <div class="verysmall">
+    <p class="footnote">
+    [1]: <a href="https://www.anandtech.com/show/18871/arm-unveils-armv92-mobile-architecture-cortex-x4-a720-and-a520-64bit-exclusive/4">Cortex-A520: LITTLE Core with Big Improvements</a>
+    </p>
+    </div>
+  </div>
 </section>
 
 <section>
-  <h2>5.a: Leveraging Chisel for RTL State Injection</h2>
+  <h2>5.a: Leveraging HDLs for TidalSim Methodology</h2>
 
   <ul>
-    <li class="fragment">Existing harness is hardcoded for one Chipyard SoC design point</li>
+    <li class="fragment">HW DSE with TidalSim requires an RTL injection harness</li>
+    <!--Existing harness is hardcoded for one Chipyard SoC design point</li>-->
     <li class="fragment">Automatic harness generation using high-level HDLs
       <ul>
         <li class="fragment">Chisel API to <em>semantically mark</em> arch and uArch state</li>
@@ -1800,7 +1813,7 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
   // ...
   val tag_array = SyncReadMem(nSets, Vec(nWays, UInt(metabits.W)))
   (0 until nSets).zip((0 until nWays)).map { case (set, way) =&gt;
-    uArchStateAnnotation(tag_array.read(set)(way), Uarch.L1.tag(set, way, cacheType=I)
+    uArchStateAnnotation(tag_array.read(set)(way), Uarch.L1.tag(set, way, cacheType=I))
   }
 }
   </code></pre>
@@ -1809,12 +1822,19 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
 <section>
   <h2>5.b: TidalSim for Verification</h2>
 
-  <div class="center">
-    <img width="60%" src="/assets/uarch_iteration_flow_tidalsim_simple-8d551231.svg" />
+  <div class="container" style="grid-template-columns: 1fr 1.4fr">
+    <div class="fragment">
+      <img width="100%" src="/assets/uarch_iteration_flow_tidalsim_simple-8d551231.svg" />
+    </div>
+    <div class="fragment">
+      <img width="100%" src="/assets/cp_synthesis1-6a888741.svg" />
+    </div>
   </div>
 
+  <div class="center">
+
   <ul>
-    <li class="fragment">Verification techniques require many waveforms for analysis
+    <li class="fragment">Property synthesis techniques require waveforms for analysis
       <ul>
         <li><strong>Specification mining</strong> for invariant synthesis or RTL bug localization</li>
         <li><strong>Coverpoint synthesis</strong> for tuning stimulus generators towards bugs</li>
@@ -1822,7 +1842,7 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
     </li>
   </ul>
 
-  <p class="center fragment">TidalSim provides a way to extract small, unique RTL waveforms from large workloads with low latency</p>
+  <p class="center fragment">TidalSim provides a way to extract many small, unique, RTL waveforms from large workloads with low latency</p>
 </section>
 
 <section>
@@ -1913,8 +1933,12 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
 <section>
   <h2 style="font-size:1.8rem;">5.b: Coverpoint Synthesis as Complement of Spec Mining</h2>
 
-  <ul>
-    <li class="fragment"><em>Specification mining</em> takes waveforms of an RTL design and synthesizes properties that are unfalsified on all traces</li>
+  <div class="center fragment">
+    <img width="60%" src="/assets/cp_synthesis2-1e034514.svg" />
+  </div>
+
+  <ul class="small">
+    <!--<li class="fragment"><em>Specification mining</em> takes waveforms of an RTL design and synthesizes properties that are unfalsified on all traces</li>-->
     <li class="fragment">Coverpoint synthesis is an alternative take on spec mining where we synthesize μArch properties that we want to see more of
       <ul>
         <li>Instead of monitoring properties for falsification, we monitor them for <em>completion</em></li>
@@ -1927,10 +1951,11 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
       </ul>
     </li>
     -->
-    <li class="fragment">Evaluation:
+    <li class="fragment">Evaluation
       <ul>
-        <li>Synthesize coverpoints on Rocket using waveforms from TidalSim and regular RTL sim with the same compute budget</li>
-        <li>Demonstrate we can synthesize more, and more interesting coverpoints using TidalSim data</li>
+        <li class="fragment">Synthesize coverpoints on Rocket using waveforms from TidalSim and regular RTL sim with the same compute budget</li>
+        <li class="fragment">Demonstrate we can synthesize more, and more interesting coverpoints using TidalSim data</li>
+        <li class="fragment">Evaluate off-the-shelf RISC-V instgen on synthesized coverpoints vs structural coverage</li>
       </ul>
     </li>
   </ul>
@@ -2001,17 +2026,11 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
 
 <section>
   <section class="center">
-    <h2>5. How (pt 2): TidalSim v2</h2>
+    <h2>6. How (pt 2): TidalSim v2</h2>
 
-    <p class="center fragment">The proposal is structured as 4 main novel extensions to TidalSim v1 that address its limitations in fundamental ways.</p>
+    <p class="center fragment">The proposal is structured as 3 novel extensions to TidalSim v1 that address its limitations in fundamental ways.</p>
 
     <ol style="list-style-type:lower-alpha;">
-      <li class="fragment">Hardcoded sampling methodology prevents exploration of the accuracy/throughput tradeoff space
-        <ul class="small">
-          <li><strong>→</strong> generalizing the spectrum of streaming sampled RTL simulation</li>
-          <li><strong>→</strong> generalizing representative sampling for PC/binary-agnostic interval embeddings to enable running multi-process workloads in an OS</li>
-        </ul>
-      </li>
       <li class="fragment">Unvalidated functional warmup models
         <ul class="small">
           <li><strong>→</strong> leverage verification libraries and fuzzing to automatically discover mismatches between the warmup model and RTL</li>
@@ -2027,6 +2046,12 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
           <li><strong>→</strong> extend sampled simulation to accelerators</li>
         </ul>
       </li>
+      <!--<li class="fragment">(Optional) Hardcoded sampling methodology prevents exploration of the accuracy/throughput tradeoff space
+        <ul class="small">
+          <li><strong>→</strong> generalizing the spectrum of streaming sampled RTL simulation</li>
+          <li><strong>→</strong> generalizing representative sampling for PC/binary-agnostic interval embeddings to enable running multi-process workloads in an OS</li>
+        </ul>
+      </li>-->
     </ol>
 
     <!-- The limitations that still exist:
@@ -2049,7 +2074,282 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
 
 <section>
   <section class="center">
-    <h2>5.a: Generalizing the Spectrum of Sampled Simulation</h2>
+    <h2>6.a: Validating Functional Warmup Models</h2>
+  </section>
+
+  <section>
+    <h2>Validation Flow</h2>
+    <p class="center fragment">Functional warmup models need to be validated against the behavior of their modeled RTL</p>
+
+    <div class="center fragment">
+      <img src="/assets/validation_flow-4d07ffad.svg" />
+      <figcaption class="small">The flow for validating RTL against its functional warmup model (specifically an L1 cache) using SimCommand, parametric generators, and fuzzing.</figcaption>
+    </div>
+  </section>
+
+  <section class="center">
+    <div class="center">
+      <img src="/assets/validation_flow-4d07ffad.svg" />
+    </div>
+  </section>
+
+  <section>
+    <h2>SimCommand: A Fast RTL Simulation API</h2>
+    <ul>
+      <li class="fragment">Testbench API embedded in Scala<sup>[1]</sup></li>
+      <li class="fragment">Uses chiseltest as the simulator interface</li>
+      <li class="fragment">Functional: testbench description and interpretation are split</li>
+    </ul>
+
+    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
+def enqueue(data: T): Command[Unit] = for {
+    _ &lt;- poke(io.bits, data)
+    _ &lt;- poke(io.valid, true.B)
+    _ &lt;- waitUntil(io.ready, true.B)
+    _ &lt;- step(1)
+    _ &lt;- poke(io.valid, false.B)
+} yield ()
+    </pre></code>
+
+    <ul class="smallish">
+      <li class="fragment">20x faster than cocotb and chiseltest, parity with SystemVerilog + VCS</li>
+      <li class="fragment">Enables writing performant testbenches with fork/join constructs in Scala</li>
+    </ul>
+
+    <div class="fragment">
+    <hr>
+    <div class="verysmall">
+      <p class="footnote">
+      [1]: Iyer, Vighnesh, et. al., SimCommand: A High Performance Multi-Threaded RTL Testbench API, OSCAR Workshop 2022
+      </p>
+    </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <div class="center">
+      <img src="/assets/validation_flow-4d07ffad.svg" />
+    </div>
+  </section>
+
+  <section>
+    <h2>Parametric Random Stimulus Generators</h2>
+
+    <ul class="small">
+      <li class="fragment">We designed a Scala eDSL for parametric random stimulus generation<sup>[1]</sup></li>
+      <li class="fragment">Supports constrained and imperative randomization of Scala and Chisel datatypes</li>
+    </ul>
+
+    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
+val intGen: Gen[Int] = Gen[Int].range(0, 100)
+</pre></code>
+
+    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
+val seqGen: Gen[Seq[Int]] = for {
+  lit &lt;- Gen.range(1, 100)
+  tailGen &lt;- Gen.oneOf(Gen(Seq()) -&gt; 0.1, seqGen -&gt; 0.9),
+  seqn &lt;- tailGen.map(t =&gt; lit +: t)
+} yield seqn
+</pre></code>
+
+    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
+object MemOp extends ChiselEnum
+case class MemTx extends Bundle {
+  val addr = UInt(32.W)
+  val data = UInt(64.W)
+  val op = MemOp
+}
+val memTxGen: Gen[MemTx] = Gen[MemTx].uniform
+</pre></code>
+
+    <div class="fragment">
+    <hr>
+    <div class="verysmall">
+      <p class="footnote">
+      [1]: Iyer, Vighnesh, et. al., New Embedded DSLs for HW Design and Verification, PLARCH Workshop 2023
+      </p>
+    </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <div class="center">
+      <img src="/assets/validation_flow-4d07ffad.svg" />
+    </div>
+  </section>
+
+  <section>
+    <h2>RTL Coverage for Simulation Feedback</h2>
+
+    <div class="container" style="grid-template-columns:1fr 1fr">
+      <div>
+        <img width="100%" src="/assets/1_coverage_figure_m_n-b33afa72.svg" />
+      </div>
+      <div>
+        <ul class="smallish">
+          <li class="fragment">Coverage implemented as a hardware IR compiler pass rather than baked into the RTL simulator</li>
+          <li class="fragment">Easy to add new coverage metrics via static analysis of the RTL netlist</li>
+          <li class="fragment">Leverage simulator independent coverage methodology for coverage instrumentation of long-lived uArch RTL</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fragment">
+    <hr>
+    <div class="verysmall">
+      <p class="footnote">
+      [1]: Laeufer, Kevin; Iyer, Vighnesh, et. al., Simulator Independent Coverage for RTL Hardware Languages, ASPLOS 2023
+      </p>
+    </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <div class="center">
+      <img src="/assets/validation_flow-4d07ffad.svg" />
+    </div>
+  </section>
+
+  <section>
+    <h2>Parametric Fuzzing</h2>
+
+    <ul class="smallish">
+      <li class="fragment">Leverage fast RTL simulation APIs, parametric stimulus generators, and coverage instrumentation for <em>parametric fuzzing</em><sup>[1]</sup></li>
+    </ul>
+
+    <img class="fragment" src="/assets/parametric_fuzzing_loop-b442d3a8.svg" />
+
+    <ul class="smallish">
+      <li class="fragment">Parametric fuzzing mutates the bytestream <em>going into</em> a parametric generator rather than the DUT directly<sup>[2]</sup></li>
+      <li class="fragment">We augment typical parametric fuzzing with <em>mark-driven mutation</em></li>
+    </ul>
+
+    <div class="fragment">
+    <hr>
+    <div class="verysmall">
+      <p class="footnote">
+      [1]: Iyer, Vighnesh, et. al., New Embedded DSLs for HW Design and Verification, PLARCH Workshop 2023<br />
+      [2]: Padhye, R., Lemieux, C., Sen, K., Papadakis, M. and Le Traon, Y., 2019. Semantic fuzzing with zest. ACM SIGSOFT.
+      </p>
+    </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Parametric Fuzzing - Demo Using Spike</h2>
+
+    <div class="center">
+      <img width="80%" class="fragment" src="/assets/spike_fuzzing-f8c9fd53.svg" />
+    </div>
+
+    <div class="container" style="grid-template-columns: 1.4fr 1fr;">
+      <div>
+        <ul class="smallish">
+          <li class="fragment">Use spike's L1 dcache model's miss rate as feedback to produce RISC-V programs that maximize it</li>
+          <li class="fragment">Using parametric fuzzing, we can automatically construct RISC-V programs to maximize any uArch metric given a small set of RISC-V sequence primitives</li>
+        </ul>
+      </div>
+      <div>
+        <img width="100%" class="fragment" src="/assets/spike_fuzzing_result-9a4a0083.png" />
+      </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <div class="center">
+      <img src="/assets/validation_flow-4d07ffad.svg" />
+    </div>
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h2>6.b: Putting the 'Tidal' in TidalSim</h2>
+  </section>
+
+  <section>
+    <h2 style="font-size:1.9rem;">Issues with Time Modeling in Sampled Simulation</h2>
+
+    <ul class="smallish">
+      <li class="fragment">Prior work runs uArch simulators in "syscall emulation" mode when evaluating workloads (e.g. SPEC), not modeling any OS-application interactions</li>
+      <li class="fragment">Real workloads contain many interactions between processes and the OS which are sensitive to the modeling of time</li>
+    </ul>
+
+    <div class="center fragment">
+      <img width="60%" src="/assets/timer_interrupts-555843ab.svg" />
+    </div>
+
+    <p class="center fragment">Consider timer interrupts: naive functional simulators will just advance one timestep per commited instruction, not matching RTL!</p>
+  </section>
+
+  <section>
+    <h2>TidalSim to Model Time Accurately</h2>
+
+    <div class="center fragment">
+      <img width="80%" src="/assets/timer_interrupts-555843ab.svg" />
+    </div>
+
+    <ul class="smallish">
+      <li class="fragment">We propose bouncing between functional and RTL simulation, where performance metrics from RTL sim impacts time advancement in functional sim</p>
+      <li class="fragment">To avoid simulating every interval in RTL sim, we leverage interval embeddings to estimate IPC on the fly</li>
+    </ul>
+    <!-- Insert image of bouncing between simulators and using interval embeddings to estimate actual time advancement-->
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h2>6.c: Sampled Simulation with Accelerators</h2>
+  </section>
+
+  <section>
+    <h2>What Makes Accelerators Suitable for Sampled Simulation?</h2>
+
+    <ul>
+      <li class="fragment">Accelerator architectural state is large and explicit
+        <ul>
+          <li class="fragment"><strong>→</strong> snapshotting is easy</li>
+          <li class="fragment"><strong>→</strong> functional warmup is unnecessary</li>
+        </ul>
+      </li>
+      <li class="fragment">Accelerator usage is often repeated in workloads
+        <ul>
+          <li class="fragment"><strong>→</strong> clustering accelerator usage embeddings is reasonable</li>
+          <li class="fragment"><strong>→</strong> potential for massive simulation throughput improvement</li>
+        </ul>
+      </li>
+      <li class="fragment">Accelerator behavior is consistent
+        <ul>
+          <li class="fragment"><strong>→</strong> accelerator performance is consistent from one dataset to another</li>
+          <li class="fragment"><strong>→</strong> embeddings don't need to be aware of the accelerator microarchitecture / latent state</li>
+        </ul>
+      </li>
+    </ul>
+    <!-- Talk about how accelerator arch state is explicit and accelerators often don't have long-lived uarch state (that requires functional warmup) -->
+    <!-- Extend arch snapshotting to accelerator state too + add restoration capabilities for accelerator state -->
+  </section>
+
+  <section>
+    <h2>Extending Interval Embeddings to Accelerators</h2>
+
+    <div class="center">
+      <img src="/assets/accelerators-550a5948.svg" />
+    </div>
+
+    <ul class="smallish">
+      <li class="fragment">Incorporate accelerator state and the semantics of the accelerator ISA to the embedding</li>
+      <li class="fragment">Can capture and embed accelerator interactions with system memory and with internal compute units</li>
+      <li class="fragment">In the case of Gemmini, we must also consider instruction dependencies and out-of-order execution + memory contention from multiple accelerators</li>
+    </ul>
+    <!-- Need to incorporate accelerator state and the semantics of accelerator ISA instructions to the embedding.
+    Consider case of Gemmini - intervals are similar if they execute similar gemmini instructions under same gemmini configuration. can use number of bytes mvin-ed / mvout-ed from sp/acc as a feature.
+    Feature tuning needs to be precise here.-->
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h2>Backup: 6.d: Generalizing the Spectrum of Sampled Simulation</h2>
     <!-- generalization + streaming (no preprocessing step required)
       <li>Not general or streaming
         <ul>
@@ -2127,253 +2427,6 @@ class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
   </section>
 </section>
 
-<section>
-  <section class="center">
-    <h2>5.b: Validating Functional Warmup Models</h2>
-  </section>
-
-  <section>
-    <h2>Validation Flow</h2>
-    <p class="center fragment">Functional warmup models need to be validated against the behavior of their modeled RTL</p>
-
-    <div class="center fragment">
-      <img src="/assets/validation_flow-4d07ffad.svg" />
-      <figcaption class="small">The flow for validating RTL against its functional warmup model (specifically an L1 cache) using SimCommand, parametric generators, and fuzzing.</figcaption>
-    </div>
-  </section>
-
-  <section>
-    <h2>SimCommand: A Fast RTL Simulation API</h2>
-    <ul>
-      <li class="fragment">Testbench API embedded in Scala<sup>[1]</sup></li>
-      <li class="fragment">Uses chiseltest as the simulator interface</li>
-      <li class="fragment">Functional: testbench description and interpretation are split</li>
-    </ul>
-
-    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
-def enqueue(data: T): Command[Unit] = for {
-    _ &lt;- poke(io.bits, data)
-    _ &lt;- poke(io.valid, true.B)
-    _ &lt;- waitUntil(io.ready, true.B)
-    _ &lt;- step(1)
-    _ &lt;- poke(io.valid, false.B)
-} yield ()
-    </pre></code>
-
-    <ul class="smallish">
-      <li class="fragment">20x faster than cocotb and chiseltest, parity with SystemVerilog + VCS</li>
-      <li class="fragment">Enables writing performant testbenches with fork/join constructs in Scala</li>
-    </ul>
-
-    <div class="fragment">
-    <hr>
-    <div class="verysmall">
-      <p class="footnote">
-      [1]: Iyer, Vighnesh, et. al., SimCommand: A High Performance Multi-Threaded RTL Testbench API, OSCAR Workshop 2022
-      </p>
-    </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Parametric Random Stimulus Generators</h2>
-
-    <ul class="small">
-      <li class="fragment">We designed a Scala eDSL for parametric random stimulus generation<sup>[1]</sup></li>
-      <li class="fragment">Supports constrained and imperative randomization of Scala and Chisel datatypes</li>
-    </ul>
-
-    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
-val intGen: Gen[Int] = Gen[Int].range(0, 100)
-</pre></code>
-
-    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
-val seqGen: Gen[Seq[Int]] = for {
-  lit &lt;- Gen.range(1, 100)
-  tailGen &lt;- Gen.oneOf(Gen(Seq()) -&gt; 0.1, seqGen -&gt; 0.9),
-  seqn &lt;- tailGen.map(t =&gt; lit +: t)
-} yield seqn
-</pre></code>
-
-    <pre class="fragment"><code class="language-scala" data-trim data-noescape>
-object MemOp extends ChiselEnum
-case class MemTx extends Bundle {
-  val addr = UInt(32.W)
-  val data = UInt(64.W)
-  val op = MemOp
-}
-val memTxGen: Gen[MemTx] = Gen[MemTx].uniform
-</pre></code>
-
-    <div class="fragment">
-    <hr>
-    <div class="verysmall">
-      <p class="footnote">
-      [1]: Iyer, Vighnesh, et. al., New Embedded DSLs for HW Design and Verification, PLARCH Workshop 2023
-      </p>
-    </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>RTL Coverage for Simulation Feedback</h2>
-
-    <div class="container" style="grid-template-columns:1fr 1fr">
-      <div>
-        <img width="100%" src="/assets/1_coverage_figure_m_n-b33afa72.svg" />
-      </div>
-      <div>
-        <ul class="smallish">
-          <li class="fragment">Coverage implemented as a hardware IR compiler pass rather than baked into the RTL simulator</li>
-          <li class="fragment">Easy to add new coverage metrics via static analysis of the RTL netlist</li>
-          <li class="fragment">Leverage simulator independent coverage methodology for coverage instrumentation of long-lived uArch RTL</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="fragment">
-    <hr>
-    <div class="verysmall">
-      <p class="footnote">
-      [1]: Laeufer, Kevin; Iyer, Vighnesh, et. al., Simulator Independent Coverage for RTL Hardware Languages, ASPLOS 2023
-      </p>
-    </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Parametric Fuzzing</h2>
-
-    <ul class="smallish">
-      <li class="fragment">Leverage fast RTL simulation APIs, parametric stimulus generators, and coverage instrumentation for <em>parametric fuzzing</em><sup>[1]</sup></li>
-    </ul>
-
-    <img class="fragment" src="/assets/parametric_fuzzing_loop-b442d3a8.svg" />
-
-    <ul class="smallish">
-      <li class="fragment">Parametric fuzzing mutates the bytestream <em>going into</em> a parametric generator rather than the <sup>[2]</sup></li>
-      <li class="fragment">We augment typical parametric fuzzing with <em>mark-driven mutation</em></li>
-    </ul>
-
-    <div class="fragment">
-    <hr>
-    <div class="verysmall">
-      <p class="footnote">
-      [1]: Iyer, Vighnesh, et. al., New Embedded DSLs for HW Design and Verification, PLARCH Workshop 2023<br />
-      [2]: Padhye, R., Lemieux, C., Sen, K., Papadakis, M. and Le Traon, Y., 2019. Semantic fuzzing with zest. ACM SIGSOFT.
-      </p>
-    </div>
-    </div>
-
-    <img class="fragment" src="/assets/spike_fuzzing-f8c9fd53.svg" />
-    <img class="fragment" src="/assets/spike_fuzzing_result-9a4a0083.png" />
-  </section>
-
-  <section>
-    <h2>Parametric Fuzzing - Demo Using Spike</h2>
-
-    <div class="center">
-      <img width="80%" class="fragment" src="/assets/spike_fuzzing-f8c9fd53.svg" />
-    </div>
-
-    <div class="container" style="grid-template-columns: 1.4fr 1fr;">
-      <div>
-        <ul class="smallish">
-          <li class="fragment">Use spike's L1 dcache model's miss rate as feedback to produce RISC-V programs that maximize it</li>
-          <li class="fragment">Using parametric fuzzing, we can automatically construct RISC-V programs to maximize any uArch metric given a small set of RISC-V sequence primitives</li>
-        </ul>
-      </div>
-      <div>
-        <img width="100%" class="fragment" src="/assets/spike_fuzzing_result-9a4a0083.png" />
-      </div>
-    </div>
-  </section>
-</section>
-
-<section>
-  <section class="center">
-    <h2>5.c: Putting the 'Tidal' in TidalSim</h2>
-  </section>
-
-  <section>
-    <h2 style="font-size:1.9rem;">Issues with Time Modeling in Sampled Simulation</h2>
-
-    <ul class="smallish">
-      <li class="fragment">Prior work runs uArch simulators in "syscall emulation" mode when evaluating workloads (e.g. SPEC), not modeling any OS-application interactions</li>
-      <li class="fragment">Real workloads contain many interactions between processes and the OS which are sensitive to the modeling of time</li>
-    </ul>
-
-    <div class="center fragment">
-      <img width="60%" src="/assets/timer_interrupts-555843ab.svg" />
-    </div>
-
-    <p class="center fragment">Consider timer interrupts: naive functional simulators will just advance one timestep per commited instruction, not matching RTL!</p>
-  </section>
-
-  <section>
-    <h2>TidalSim to Model Time Accurately</h2>
-
-    <div class="center fragment">
-      <img width="80%" src="/assets/timer_interrupts-555843ab.svg" />
-    </div>
-
-    <ul class="smallish">
-      <li class="fragment">We propose bouncing between functional and RTL simulation, where performance metrics from RTL sim impacts time advancement in functional sim</p>
-      <li class="fragment">To avoid simulating every interval in RTL sim, we leverage interval embeddings to estimate IPC on the fly</li>
-    </ul>
-    <!-- Insert image of bouncing between simulators and using interval embeddings to estimate actual time advancement-->
-  </section>
-</section>
-
-<section>
-  <section class="center">
-    <h2>5.d: Sampled Simulation with Accelerators</h2>
-  </section>
-
-  <section>
-    <h2>What Makes Accelerators Suitable for Sampled Simulation?</h2>
-
-    <ul>
-      <li class="fragment">Accelerator architectural state is large and explicit
-        <ul>
-          <li class="fragment"><strong>→</strong> snapshotting is easy</li>
-          <li class="fragment"><strong>→</strong> functional warmup is unnecessary</li>
-        </ul>
-      </li>
-      <li class="fragment">Accelerator usage is often repeated in workloads
-        <ul>
-          <li class="fragment"><strong>→</strong> clustering accelerator usage embeddings is reasonable</li>
-          <li class="fragment"><strong>→</strong> potential for massive simulation throughput improvement</li>
-        </ul>
-      </li>
-      <li class="fragment">Accelerator behavior is consistent
-        <ul>
-          <li class="fragment"><strong>→</strong> accelerator performance is consistent from one dataset to another</li>
-          <li class="fragment"><strong>→</strong> embeddings don't need to be aware of the accelerator microarchitecture / latent state</li>
-        </ul>
-      </li>
-    </ul>
-    <!-- Talk about how accelerator arch state is explicit and accelerators often don't have long-lived uarch state (that requires functional warmup) -->
-    <!-- Extend arch snapshotting to accelerator state too + add restoration capabilities for accelerator state -->
-  </section>
-
-  <section>
-    <h2>Extending Interval Embeddings to Accelerators</h2>
-
-    <div class="center">
-      <img src="/assets/accelerators-550a5948.svg" />
-    </div>
-
-    <ul class="smallish">
-      <li class="fragment">Incorporate accelerator state and the semantics of the accelerator ISA to the embedding</li>
-      <li class="fragment">Can capture and embed accelerator interactions with system memory and with internal compute units</li>
-      <li class="fragment">In the case of Gemmini, we must also consider instruction dependencies and out-of-order execution + memory contention from multiple accelerators</li>
-    </ul>
-    <!-- Need to incorporate accelerator state and the semantics of accelerator ISA instructions to the embedding.
-    Consider case of Gemmini - intervals are similar if they execute similar gemmini instructions under same gemmini configuration. can use number of bytes mvin-ed / mvout-ed from sp/acc as a feature.
-    Feature tuning needs to be precise here.-->
-  </section>
-</section>
 
 <!-- <section>
   <h2>2. Modeling Timing-Aware Events (Dynamic Simulation)</h2>
@@ -2419,77 +2472,52 @@ val memTxGen: Gen[MemTx] = Gen[MemTx].uniform
 
   <section>
     <h2>Outline</h2>
-    <ol class="small">
+    <ol style="font-size: 1rem;">
       <li class="fragment">Motivation and background</li>
-      <li class="fragment">Implementation and evaluation of TidalSim v0.1
+      <li class="fragment">Implementation and evaluation of TidalSim v0.1 - <strong>Completed</strong>
         <ul>
           <li>Mixed functional/RTL simulation, IPC/MPKI/cache behavior estimation</li>
           <li>Clean estimation on all baremetal workloads (MiBench, Embench)</li>
         </ul>
       </li>
-      <li class="fragment">Implementation and evaluation of TidalSim v1
+      <li class="fragment">Implementation and evaluation of TidalSim v1 - <strong>March 2024</strong>
         <ul>
           <li>Functional warmup of all long-lived units</li>
           <li>Demonstrate &lt;1% IPC error</li>
         </ul>
       </li>
-      <li class="fragment">Generalizing the spectrum of streaming sampled simulation
+      <!--<li class="fragment">Generalizing the spectrum of streaming sampled simulation
         <ul>
           <li>Formalization of sampled simulation</li>
           <li>Investigating binary-agnostic embeddings</li>
           <li>Running full-stack applications on top of an OS</li>
         </ul>
-      </li>
-      <li class="fragment">Validating functional warmup models
+      </li>-->
+      <li class="fragment">Validating functional warmup models - <strong>May 2024</strong>
         <ul>
           <li>SimCommand, parametric stimulus generation APIs, parametric fuzzing</li>
           <li>Heuristics for comparing functional models and RTL uArch structures</li>
         </ul>
       </li>
-    </ol>
-  </section>
-
-  <section>
-    <h2>Outline (continued)</h2>
-
-    <ol class="small" start=6>
-      <li class="fragment">Dynamically switching between RTL and functional simulation for modeling time accurately
+      <li class="fragment">Modeling time accurately - <strong>June 2024</strong>
         <ul>
+          <li>Dynamically switching between RTL and functional simulation for modeling time accurately</li>
           <li>Time estimation fidelity, comparison to FireSim in modeling timer interrupts</li>
         </ul>
       </li>
-      <li class="fragment">Sampled simulation for accelerators
+      <li class="fragment">Sampled simulation for accelerators - <strong>August 2024</strong>
         <ul>
           <li>New embeddings for code that uses accelerators</li>
         </ul>
       </li>
-      <li class="fragment">Using TidalSim for hardware DSE
+      <li class="fragment">Using TidalSim for hardware DSE - <strong>September 2024</strong>
         <ul>
           <li>Language-level support for arch/uArch state marking and testharness synthesis</li>
-          <li>Cache sizing/hierarchy case study to show superior DSE latency and accuracy vs other approaches</li>
+          <li>Prefetcher optimization case study to show superior DSE latency and accuracy vs other approaches</li>
         </ul>
       </li>
-      <li class="fragment">Using TidalSim for coverpoint synthesis</li>
+      <li class="fragment">Using TidalSim for coverpoint synthesis - <strong>November 2024</strong></li>
     </ol>
-  </section>
-
-  <section>
-    <h2>Outline (condensed)</h2>
-    <ol class="small">
-      <li>Motivation and background</li>
-      <li>Implementation and evaluation of TidalSim v0.1</li>
-      <li>Implementation and evaluation of TidalSim v1</li>
-      <li>Generalizing the spectrum of streaming sampled simulation</li>
-      <li>Validating functional warmup models</li>
-      <li>Dynamically switching between RTL and functional simulation for modeling time accurately</li>
-      <li>Sampled simulation for accelerators</li>
-      <li>Using TidalSim for hardware DSE</li>
-      <li>Using TidalSim for coverpoint synthesis</li>
-    </ol>
-
-    <div class="center">
-      <img width="50%" src="/assets/uarch_iteration_flow_tidalsim-ba904d05.svg" />
-    </div>
   </section>
 </section>
 
