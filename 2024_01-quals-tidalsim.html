@@ -36,7 +36,7 @@
         <div class="slides">
             <section class="center">
   <h1>TidalSim: A Unified Microarchitectural Simulation Framework</h1>
-  <h2 style="font-weight: 400;">To Identify and Leverage <strong>Unique Aspects of Workloads</strong> on <strong>Heterogeneous SoCs</strong> for Power and Performance Estimation and Verification</h2>
+  <h2 style="font-weight: 400;">To Identify and Leverage <strong>Unique Aspects of Workloads</strong> on <strong>Heterogeneous SoCs</strong> for Performance Estimation and Verification</h2>
   <h3 style="font-weight: 500;">Vighnesh Iyer</h3>
   <h3 style="font-weight: normal;">Qualifying Exam Presentation</h3>
   <h4 style="font-weight: normal;">Wednesday, January 17th, 2024</h4>
@@ -63,10 +63,132 @@
 <section class="center">
   <h2 class="center">1. Why: What Is the Problem?</h2>
   <ul>
-    <li class="fragment">Emergence of domain-specialized heterogeneous SoCs</li>
+    <!--<li class="fragment">Emergence of domain-specialized heterogeneous SoCs with specialized cores and accelerators</li>
     <li class="fragment">Rapid design iteration is the key to achiving optimal PPA + time to market</li>
-    <li class="fragment">Existing pre-silicon evaluation (power, performance, functionality) techniques on real workloads are unsuitable for rapid iteration</li>
+    <li class="fragment">Existing pre-silicon performance evaluation techniques on real workloads either bottleneck the iteration latency of the design cycle or are inaccurate</li>
+    -->
+
+    <!--<li class="fragment">Existing pre-silicon evaluation (power, performance, functionality) techniques on real workloads are unsuitable for rapid iteration</li>-->
   </ul>
+</section>
+
+
+<section>
+  <h2 style="font-size:1.8rem;">The New-Era of Domain-Specialized Heterogeneous SoCs</h2>
+  <!-- Raptor Lake, Apple M3, Snapdragon 8 Gen 3, Exynos 2200 -->
+  <!-- Server class, laptop class, smartphone class - similar heterogeneous convergence -->
+
+  <div class="r-stack">
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
+      <img width="100%" src="/assets/raptor_lake-cd021bc9.jpg">
+      <figcaption class="small center"><a href="https://twitter.com/Locuza_/status/1574892888491790336">Locuza (Twitter): Raptor Lake-S Die Analysis</a></figcaption>
+    </div>
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
+      <img width="50%" src="/assets/exynos_2200-2271bf90.jpg">
+      <figcaption class="small center"><a href="https://locuza.substack.com/p/die-analysis-samsung-exynos-2200">Locuza Substack: Die analysis: Samsung Exynos 2200 with RDNA2 graphics</a></figcaption>
+    </div>
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
+      <img width="80%" src="/assets/a17_pro-d4816c44.jpg">
+      <figcaption class="small center"><a href="https://twitter.com/Frederic_Orange/status/1711432628908253520/photo/1">@Frederic_Orange Twitter: A17 Pro Die Analysis</a></figcaption>
+    </div>
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
+      <img width="40%" src="/assets/m3_max-07851645.jpg">
+      <figcaption class="small center"><a href="https://twitter.com/highyieldYT/status/1719306863341113349/photo/1">@highyieldYT Twitter: M3 Max Die Analysis</a></figcaption>
+    </div>
+    <div class="fragment fade-in">
+      <ul>
+        <li class="fragment">Two trends in SoC design:
+          <ul>
+            <li>Heterogeneous cores targeting different power/perf curves + workloads</li>
+            <li>Domain-specific accelerators</li>
+          </ul>
+        </li>
+        <li class="fragment">Need a pre-silicon evaluation strategy for rapid, PPA optimal design of these units
+          <ul>
+            <li>Limited time per design cycle <strong>→</strong> limited time per evaluation</li>
+            <li>More evaluations = more opportunities for optimization</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 style="font-size: 1.8rem;">The Microarchitectural Iteration Loop (Industry)</h2>
+
+  <div class="container" style="grid-template-columns: 1fr 1fr;">
+    <div class="fragment">
+      <img src="/assets/uarch_iteration_flow_v2-cb986edd.svg" />
+      <figcaption class="small center">An idealized iteration loop for microarchitectural design. The 'Evaluator' starts off as a performance simulator and transitions to RTL as the design is iterated.</figcaption>
+    </div>
+    <div>
+      <img class="fragment" src="/assets/industry_flow-f9e25e65.svg" />
+      <figcaption class="small fragment center">During RTL implementation we need performance validation against the model.</figcaption>
+      <img width="70%" class="fragment" src="/assets/industry_flow2-a1db5892.svg" />
+      <figcaption class="small fragment center">Existing techniques for RTL performance validation</figcaption>
+    </div>
+  </div>
+
+  <p class="center fragment">Industry needs a methodology for rapid RTL performance validation that can be used in the RTL design cycle.</p>
+
+  <!-- <p class="center fragment">We want an "Evaluator" that has low latency, high throughput, high accuracy, low cost, and rich output collateral</p>
+  <p class="center fragment"><strong>Existing tools cannot deliver on all axes</strong></p>-->
+
+  <!-- Can't get all axes using any existing tool (low latency, high throughput, low cost, high accuracy, rich output collateral)! -->
+  <!-- <p class="center fragment">Existing pre-silicon evaluation (power, performance, functionality) techniques on real workloads are unsuitable for rapid iteration</p> -->
+</section>
+
+<section>
+  <h2>The Microarchitectural Iteration Loop (Academia)</h2>
+  <!-- Using RTL in evaluation has been too difficult -->
+
+  <div class="center">
+      <img class="fragment" src="/assets/academic_flow-5c27066c.svg" />
+      <figcaption class="small center fragment">The typical manner in which microarchitectural ideas are evaluated in academia. Academics rarely write RTL due to the difficulty of evaluation, instead opting for uArch simulators.</figcaption>
+  </div>
+
+  <p class="center fragment">Academia needs a methodology for rapid RTL evaluation as a part of an RTL-first evaluation strategy</p>
+</section>
+
+<section>
+  <h2>The Microarchitectural Iteration Loop (Startup)</h2>
+  <!-- Must advance a RTL-first design methodology -->
+
+  <div class="container" style="grid-template-columns: 1fr 1.5fr;">
+    <div>
+      <img width="70%" class="fragment" src="/assets/startup_flow1-bd7aeeee.svg" />
+      <figcaption class="small fragment center">Startups have limited human resources to allocate to performance modeling, instead choosing to focus on architecture and RTL design.</figcaption>
+    </div>
+    <div>
+      <img width="100%" class="fragment" src="/assets/startup_flow2-ac8b0d6b.svg" />
+      <figcaption class="small fragment center">Cost-constrained, lean, teams can't depend on expensive emulation/prototyping platforms.</figcaption>
+    </div>
+  </div>
+
+  <p class="center fragment">Chip startups need a methodology for low-cost and rapid RTL evaluation to enable high productivity and confidence</p>
+</section>
+
+<section>
+  <h2>Limitations of Existing Evaluators</h2>
+
+  <div class="center">
+    <img width="40%" src="/assets/uarch_iteration_flow_v2-cb986edd.svg" />
+  </div>
+
+  <ul class="small fragment">
+    <li><strong>ISA simulation</strong>: no accuracy</li>
+    <li><strong>Trace/Cycle uArch simulation</strong>: low accuracy <!--(unknown sources of errors)--></li>
+    <li><strong>RTL simulation</strong>: low throughput</li>
+    <li><strong>FPGA prototyping</strong>: high startup latency</li>
+    <li><strong>HW emulators</strong>: high cost</li>
+  </ul>
+
+  <p class="center fragment">We will propose a <em>simulation methodology</em> that can deliver on all axes (accuracy, throughput, startup latency, cost) and is useful for industry, academics, and startups.</p>
+</section>
+
+<section class="center">
+  <h2>Backup Slides</h2>
 </section>
 
 <section>
@@ -133,7 +255,7 @@
 </section>
 
 <section>
-  <h2>The Consequences of These Trends</h2>
+  <h2>Trends in SoCs</h2>
 
   <div class="container" style="text-align: center; grid-template-columns: 1fr 1fr;">
     <div class="fragment">
@@ -165,31 +287,6 @@
     <li class="fragment">Domain-specific accelerators</li>
   </ol>
   <!--<em>General-purpose</em> single thread performance is stagnating, but tuned cores still can squeeze a lot more out-->
-</section>
-
-<section>
-  <h2>The New-Era of Domain-Specialized Heterogeneous SoCs</h2>
-  <!-- Raptor Lake, Apple M3, Snapdragon 8 Gen 3, Exynos 2200 -->
-  <!-- Server class, laptop class, smartphone class - similar heterogeneous convergence -->
-
-  <div class="r-stack">
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="100%" src="/assets/raptor_lake-cd021bc9.jpg">
-      <figcaption class="small center"><a href="https://twitter.com/Locuza_/status/1574892888491790336">Locuza (Twitter): Raptor Lake-S Die Analysis</a></figcaption>
-    </div>
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="50%" src="/assets/exynos_2200-2271bf90.jpg">
-      <figcaption class="small center"><a href="https://locuza.substack.com/p/die-analysis-samsung-exynos-2200">Locuza Substack: Die analysis: Samsung Exynos 2200 with RDNA2 graphics</a></figcaption>
-    </div>
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="80%" src="/assets/a17_pro-d4816c44.jpg">
-      <figcaption class="small center"><a href="https://twitter.com/Frederic_Orange/status/1711432628908253520/photo/1">@Frederic_Orange Twitter: A17 Pro Die Analysis</a></figcaption>
-    </div>
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="40%" src="/assets/m3_max-07851645.jpg">
-      <figcaption class="small center"><a href="https://twitter.com/highyieldYT/status/1719306863341113349/photo/1">@highyieldYT Twitter: M3 Max Die Analysis</a></figcaption>
-    </div>
-  </div>
 </section>
 
 <section>
@@ -244,50 +341,19 @@
     </li>
   </ul>
   <p class="center fragment">More evaluations = more opportunities for optimization</p>
-</section>
-
-<section>
-  <h2>The Microarchitectural Iteration Loop</h2>
-
-  <div class="center">
-    <img src="/assets/uarch_iteration_flow_v2-cb986edd.svg" />
-  </div>
-
-  <p class="center fragment">We want an "Evaluator" that has low latency, high throughput, high accuracy, low cost, and rich output collateral</p>
-  <p class="center fragment"><strong>Existing tools cannot deliver on all axes</strong></p>
-  <!-- Can't get all axes using any existing tool (low latency, high throughput, low cost, high accuracy, rich output collateral)! -->
-  <!-- <p class="center fragment">Existing pre-silicon evaluation (power, performance, functionality) techniques on real workloads are unsuitable for rapid iteration</p> -->
-</section>
-
-<section>
-  <h2>Limitations of Existing Evaluators</h2>
-
-  <div class="center">
-    <img width="60%" src="/assets/uarch_iteration_flow_v2-cb986edd.svg" />
-  </div>
-
-  <ul class="smallish fragment">
-    <li><strong>ISA simulation</strong>: no accuracy</li>
-    <li><strong>Trace/Cycle uArch simulation</strong>: low accuracy, insufficient output collateral</li>
-    <li><strong>RTL simulation</strong>: low throughput</li>
-    <li><strong>FPGA prototyping</strong>: high latency</li>
-    <li><strong>HW emulators</strong>: high cost</li>
-  </ul>
-
-  <p class="center fragment"><strong>We will propose a simulator that can deliver on all axes.</strong></p>
 </section></section>
 
 <section>
 <section class="center">
   <h2 class="center">2. What: Our Vision for TidalSim</h2>
-  <p class="center fragment"><strong>What if</strong> we had a simulator that:</p>
+  <p class="center fragment"><strong>What if</strong> we had a magic box that:</p>
 
   <ol>
-    <li class="fragment">Is <strong>fast</strong> enough to run real workloads on heterogeneous SoCs</li>
+    <li class="fragment">Is <strong>fast</strong> enough to run real workloads<!-- on heterogeneous SoCs--></li>
     <li class="fragment">Is <strong>accurate</strong> enough to use confidently for microarchitectural DSE</li>
     <li class="fragment">Has <strong>low latency</strong> to not bottleneck the hardware iteration loop</li>
-    <li class="fragment">Can produce <strong>RTL-level collateral</strong> for applications from power modeling to application-level profiling to verification
-      <ul style="font-size: 1.4rem;"><li class="fragment">Can automatically <strong>isolate and extract benchmarks</strong> from long workloads by identifying unique aspects with respect to power, performance, and functionality</li></ul>
+    <li class="fragment">Can produce <strong>RTL-level collateral</strong> for performance or functional verification</li>
+    <li>Can run <strong>real workloads</strong> by identifying unique aspects of the program automatically<!--with respect to power, performance, and functionality--></li>
     </li>
   </ol>
 </section>
@@ -297,24 +363,96 @@
   <!-- How does this tool address the challenges we posed in the Why section? -->
 
   <div class="center">
-    <img src="/assets/uarch_iteration_flow_tidalsim-ba904d05.svg" />
-    <figcaption class="small center"><strong>TidalSim</strong>: a fast, accurate, low latency, low cost microarchitectural simulator that produces RTL-level collateral for performance and power estimation and verification on real workloads.</figcaption>
+    <img src="/assets/uarch_iteration_flow_tidalsim_simple-8d551231.svg" />
+    <figcaption class="smallish center"><strong>TidalSim</strong>: a fast, accurate, low latency, low cost microarchitectural <em>simulation methodology</em> that produces RTL-level collateral for performance estimation and verification on real workloads.</figcaption>
   </div>
+</section>
+
+<section>
+  <h2>TidalSim Components</h2>
+
+  <div class="center fragment">
+    <img src="/assets/tidalsim_components_simple-07f5b696.svg" />
+    <figcaption class="fragment small center">Overview of the components of TidalSim.</figcaption>
+  </div>
+
+  <p class="center fragment">TidalSim is <em>not</em> a simulator. It is a <em>simulation methodology</em> that combines the strengths of architectural simulators, uArch models, and RTL simulators.</p>
+</section>
+
+<section>
+  <h2>TidalSim Execution</h2>
+
+  <div class="center fragment">
+    <img width="70%" src="/assets/tidalsim_time_domain-436bded7.svg" style="margin-top:-1rem;"/>
+    <figcaption class="fragment smallish center" style="margin-top:-1.5rem;">TidalSim moves simulation execution back and forth between architectural, uArch, and RTL simulators based on dynamic workload analysis.</figcaption>
+  </div>
+</section>
+
+<!-- What does TidalSim **enable** (for each of the people - industry, academia, startups) -->
+<section>
+  <h2>What Does TidalSim Enable?</h2>
+
+  <div class="r-stack">
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
+      <h3 class="center">Industry</h3>
+      <img src="/assets/industry_flow2-a1db5892.svg" height="100%" />
+      <figcaption class="center">RTL performance validation is too costly.</figcaption>
+    </div>
+
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
+      <h3 class="center">Industry</h3>
+      <img src="/assets/industry_flow_new-8102fd45.svg" height="100%" />
+      <figcaption class="center">Rapid RTL performance validation becomes viable.</figcaption>
+    </div>
+
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
+      <h3 class="center">Academia</h3>
+      <img src="/assets/academic_flow-5c27066c.svg" height="100%" />
+      <figcaption class="center">Academics resort to inaccurate uArch simulators.</figcaption>
+    </div>
+
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
+      <h3 class="center">Academia</h3>
+      <img src="/assets/academic_flow_new-02d53047.svg" height="100%" />
+      <figcaption>RTL-first evaluation strategy becomes viable.</figcaption>
+    </div>
+
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center; width: 80%;">
+      <h3 class="center">Startup / Lean Team</h3>
+      <img src="/assets/startup_flow2-ac8b0d6b.svg" height="100%" />
+      <figcaption>No rapid performance evaluation strategy for RTL.</figcaption>
+    </div>
+
+    <div class="fragment fade-in" style="display: grid; place-items: center; width: 80%;">
+      <h3 class="center">Startup / Lean Team</h3>
+      <img src="/assets/startup_flow_new-62c412a7.svg" height="100%" />
+      <figcaption>RTL-first design strategy becomes viable.</figcaption>
+    </div>
+  </div>
+
+  <p class="fragment center">TidalSim <strong>enables new design methodologies</strong> for industry, academia, and lean chip design teams.</p>
 </section>
 
 <section>
   <h2>Scope of Thesis</h2>
 
-  <div class="center">
-    <img width="50%" src="/assets/uarch_iteration_flow_tidalsim-ba904d05.svg" />
+  <div class="container">
+    <div>
+      <img width="100%" src="/assets/tidalsim_components_simple-07f5b696.svg" />
+    </div>
+    <div>
+      <img width="100%" src="/assets/uarch_iteration_flow_tidalsim_simple-8d551231.svg" />
+    </div>
   </div>
 
   <ol>
     <li class="fragment">Implementation of TidalSim</li>
-    <li class="fragment">Evaluation of TidalSim for performance estimation on large workloads
-    <ul style="font-size: 1.4rem;"><li>Embench, GAP, SPEC, HyperProtoBench, MLPerf, CloudSuite</li></ul>
+    <li class="fragment">Evaluation of TidalSim for performance estimation on realistic and large workloads
+      <ul style="font-size: 1.4rem;">
+        <li>Embench, GAP, SPEC, HyperProtoBench, MLPerf, CloudSuite</li>
+      </ul>
     </li>
-    <li class="fragment">Case studies for hardware DSE <!--power macromodel training,--> and coverpoint synthesis</li>
+    <li class="fragment">Case studies for hardware DSE and coverpoint synthesis</li>
   </ol>
 </section></section>
 
@@ -325,18 +463,399 @@
     <li class="fragment">An overview of simulation broadly
       <ul><li>Abstractions used in hardware modeling</li></ul>
     </li>
-    <li class="fragment">The limitations of existing microarchitectural simulators</li>
-    <li class="fragment">Sampled simulation techniques
+    <li class="fragment">Comparison of existing pre-silicon simulation techniques</li>
+    <li class="fragment">The limitations of microarchitectural simulators</li>
+    <li class="fragment">Sampled simulation
       <ul>
-        <li>Phase behavior of programs</li>
-        <li>SimPoint: Representative sampling</li> <!-- interval embedding + clustering -->
-        <li>SMARTs: Reservoir sampling</li> <!-- error bounding via CLT -->
+        <li>SimPoint: Representative sampling + phase behavior of programs</li> <!-- interval embedding + clustering -->
+        <li>SMARTs: Random sampling</li> <!-- error bounding via CLT -->
         <li>Functional warmup techniques</li>
-        <li>Detailed warmup</li>
       </ul>
     </li>
+    <li class="fragment">Why RTL-level sampled simulation?</li>
     <!--<li class="fragment">Prior work on rapid microarchitectural evaluation</li>-->
   </ul>
+</section>
+
+<section>
+  <h2>Hardware Abstractions</h2>
+
+  <ol class="small">
+    <li class="fragment">Architectural (functional) models
+      <ul>
+        <li class="fragment">Emulate an ISA; they only model <em>architectural</em> state, <em>not</em> uArch state</li>
+        <li class="fragment"><strong>Examples</strong>: spike (RISC-V), qemu (multiple ISAs)</li>
+      </ul>
+    </li>
+    <li class="fragment">Microarchitectural models (<em>"rough"</em>) with approximate state and timing
+      <ul>
+        <li class="fragment"><strong>Inputs</strong>: High-level microarchitectural description, workload characteristics
+        <li class="fragment"><strong>Outputs</strong>: Performance estimate (e.g. aggregate IPC)</li>
+        <li class="fragment"><strong>Example</strong>: McPAT</li>
+      </ul>
+    </li>
+    <li class="fragment">Microarchitectural models (<em>"detailed"</em>) with more refined state and timing
+      <ul>
+        <li class="fragment"><strong>Inputs</strong>: Detailed microarchitectural description, ELF binary</li>
+        <li class="fragment"><strong>Outputs</strong>: Detailed pipeline execution trace + low-level performance metrics</li>
+        <li class="fragment"><strong>Examples</strong>: gem5, ZSim, SST, MARSSx85, Sniper, ESESC</li>
+      </ul>
+    </li>
+    <li class="fragment">Register-transfer level (RTL) models with full fidelity state and timing
+      <ul>
+        <li class="fragment"><strong>Examples</strong>: Verilog, Chisel</li>
+      </ul>
+    </li>
+  </ol>
+
+  <hr class="fragment">
+
+  <p class="center fragment">Each abstraction makes an accuracy / latency / throughput tradeoff.</p>
+</section>
+
+<section>
+  <h2>Simulator Metrics</h2>
+
+  <p class="center fragment">Simulation techniques span the gamut on various axes. Each simulation technique assumes <em>a particular hardware abstraction</em>.</p>
+
+  <ul class="smallish">
+    <li class="fragment"><strong>Throughput</strong>
+      <ul><li>How many instructions can be simulated per real second? (MIPS = millions of instructions per second)</li></ul>
+    </li>
+    <li class="fragment"><strong>Accuracy</strong>
+      <ul><li>Do the output metrics of the simulator match those of the modeled SoC in its real environment?</li></ul>
+    </li>
+    <li class="fragment"><strong>Startup latency</strong>
+      <ul><li>How long does it take from the moment the simulator's parameters/inputs are modified to when the first instruction is executed?</li></ul>
+    </li>
+    <!--<li class="fragment"><strong>Metric diversity</strong>
+      <ul>
+        <li>What metrics can the simulator emit?</li>
+        <li>This is tied to the hardware abstraction used</li>
+      </ul>
+    </li>-->
+    <li class="fragment"><strong>Cost</strong>
+      <ul>
+        <li>What hardware platform does the simulator run on?</li>
+        <li>How much does it cost to run a simulation?</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<section>
+  <!--RTL vs detailed uArch vs arch vs high-level spec
+
+  We will restrict our scope to architectures which already have concrete implementations.
+  No need to high-level analytical analysis since we're trying to speed up iteration loop, not discover new accelerator or core architectures.
+  This is a separate research direction.-->
+  <h2>Existing Hardware Simulation Techniques</h2>
+
+  <table class="comparison_table">
+    <thead><tr>
+      <th></th>
+      <th>Examples</th>
+      <th>Throughput</th>
+      <th>Latency</th>
+      <th>Accuracy</th>
+      <!--<th>Metrics</th>-->
+      <th>Cost</th>
+    </tr></thead>
+    <tbody>
+    <!--<tr class="fragment">
+      <td>Analytical Models</td>
+      <td>Aladdin, Timeloop</td>
+      <td class="bg-green">10-1000 MIPS</td>
+      <td class="bg-green">seconds</td>
+      <td class="bg-red">Wildly variable</td>
+      <td>PPA estimates</td>
+      <td class="bg-green">Minimal</td>
+    </tr>-->
+    <tr class="fragment">
+      <td>Architectural Simulators</td>
+      <td>spike, qemu</td>
+      <td class="bg-green">10-100+ MIPS</td>
+      <td class="bg-green">&lt;1 second</td>
+      <td class="bg-red">None</td>
+      <!--<td>Commit trace</td>-->
+      <td class="bg-green">Minimal</td>
+    </tr>
+    <tr class="fragment">
+      <td>μArch Simulators</td>
+      <td>gem5, Sniper, ZSim, SST</td>
+      <td class="bg-orange">100 KIPS (gem5) - 100 MIPS (Sniper)</td>
+      <td class="bg-green">&lt;1 minute</td>
+      <td class="bg-orange">10-50% IPC error</td>
+      <!--<td>Pipeline view / IPC trace</td>-->
+      <td class="bg-green">Minimal</td>
+    </tr>
+    <tr class="fragment">
+      <td>RTL Simulators</td>
+      <td>Verilator, VCS, Xcelium</td>
+      <td class="bg-red">1-10 KIPS</td>
+      <td class="bg-orange">2-10 minutes</td>
+      <td class="bg-green">Cycle-exact</td>
+      <!--<td>RTL-level traces</td>-->
+      <td class="bg-green">Minimal</td>
+    </tr>
+    <!--<tr class="fragment">
+      <td>FPGA Prototypes</td>
+      <td>HAPS, Protium, ZeBu</td>
+      <td class="bg-green">≈ 50 MIPS</td>
+      <td class="bg-red">2-6 hours</td>
+      <td class="bg-green">Cycle-exact</td>
+      <td>Subset of RTL signals</td>
+      <td class="bg-orange">$10k+</td>
+    </tr>-->
+    <tr class="fragment">
+      <td>FPGA-Based Emulators</td>
+      <td>Firesim</td>
+      <td class="bg-green">≈ 10 MIPS</td>
+      <td class="bg-red">2-6 hours</td>
+      <td class="bg-green">Cycle-exact</td>
+      <!--<td>Subset of RTL signals</td>-->
+      <td class="bg-orange">$10k+</td>
+    </tr>
+    <tr class="fragment">
+      <td>ASIC-Based Emulators</td>
+      <td>Palladium, Veloce</td>
+      <td class="bg-green">≈ 0.5-10 MIPS</td>
+      <td class="bg-orange">&lt;1 hour</td>
+      <td class="bg-green">Cycle-exact</td>
+      <!--<td>RTL-level traces</td>-->
+      <td class="bg-red">$10M+</td>
+    </tr>
+    <tr class="fragment">
+      <td>Multi-level Sampled Simulation</td>
+      <td><strong>TidalSim</strong></td>
+      <td class="bg-green">10+ MIPS</td>
+      <td class="bg-green">&lt;1 minute</td>
+      <td class="bg-green">&lt;1% IPC error</td>
+      <!--<td>Sampled RTL-level traces</td>-->
+      <td class="bg-green">Minimal</td>
+    </tr>
+    </tbody>
+  </table>
+  <!-- uArch Perf Sim is nearly there! Can we improve its accuracy or improve its throughput to get us to the golden promise land? -->
+
+  <p class="center fragment">TidalSim combines the strengths of each technique to produce a meta-simulator that achieves high throughput, low latency, high accuracy, and low cost.</p>
+</section>
+
+<section>
+  <h2>Accuracy of Microarchitectural Simulators</h2>
+
+  <!-- Want to show:
+    - simulators are generally inaccurate wrt real hardware first of all
+    - simulators disagree with each other a lot
+    - simulators poorly model the impact of various uarch changes (pipeline width, cache size, branch predictor)
+    - simulators need calibration with silicon to get decent accuracy (which is painful and doesn't prove anything about generalizability)
+  -->
+
+  <div class="center r-stack">
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
+      <img width="80%" src="/assets/uarch_simulator_study-ipc2-26ad2698.png" />
+      <figcaption class="small center">Raw IPC errors on 64-bit workloads vs real Haswell<sup>[1]</sup>. Microarchitectural simulators have substantial errors exceeding 20%.
+      </figcaption>
+    </div>
+    <div class="fragment fade-in" style="display: grid; place-items: center;">
+      <img width="80%" src="/assets/uarch_simulator_study-branch_predictor-f3ac1413.png" />
+      <figcaption class="small center">Impact of using a bimodal branch predictor vs the Haswell BP<sup>[1]</sup>.
+      Simulators disagree with each other! The sensitivity of each simulator is wildly different!
+      </figcaption>
+    </div>
+  </div>
+
+  <!-- Trends aren't enough - see the sensitivity differences of these simulators! Gradients are critical! -->
+  <!-- if these detailed uArch models aren't good enough wrt accuracy, then throw the rest of the less detailed ones away too! -->
+
+  <p class="smallish fragment center">Trends aren't enough<sup>[2]</sup>. Note the sensitivity differences - gradients are critical!</p>
+  <p class="smallish fragment center">uArch simulators are <strong>not accurate enough</strong> for microarchitectural evaluation.</p>
+
+  <div>
+  <hr>
+  <div class="verysmall">
+    <p class="footnote" style="margin:0;">
+    [1]: Akram, A. and Sawalha, L., 2019. A survey of computer architecture simulation techniques and tools. IEEE Access<br />
+    [2]: Nowatzki, T., Menon, J., Ho, C.H. and Sankaralingam, K., 2015. Architectural simulators considered harmful. Micro.
+    </p>
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2>Sampled Simulation</h2>
+
+  <p class="center fragment">Instead of running the entire program in uArch simulation, run the entire program in <em>functional simulation</em> and only run <em>samples</em> in uArch simulation</p>
+
+  <div class="fragment center">
+    <img width="60%" src="/assets/sampled_simulation0-93b238a2.png" />
+  </div>
+
+  <p class="fragment center">The full workload is represented by a selection of <em>sampling units</em>.</p>
+
+  <ol class="smallish">
+    <li class="fragment">How should sampling units be selected?</li> <!-- sampling methodology -->
+    <li class="fragment">How can we accurately estimate the performance of a sampling unit?</li> <!-- functional and detailed warmup -->
+    <li class="fragment">How can we estimate errors when extrapolating from sampling units?</li> <!-- error bounding via CLT or other heuristics -->
+  </ol>
+</section>
+
+<section>
+  <!--<h2 style="font-size:1.8rem;">Representative Sampling using Phase Behavior of Programs</h2>-->
+  <h2>Existing Sampling Techniques</h2>
+
+  <div class="container" style="grid-template-columns: 1fr 1fr;">
+  <div>
+  <h4 class="center fragment">SimPoint</h4>
+  <div class="fragment" style="display:grid; align-content: center; justify-items:center; grid-template-columns:1fr 1fr;">
+    <img style="display:grid;" src="/assets/simpoint-gzip_phases-c68f8d72.gif" />
+    <img style="display:grid;" src="/assets/simpoint-gcc_phases-2046d2b5.gif" />
+  </div>
+  <ul class="small">
+    <li class="fragment">Program execution traces aren’t random
+      <ul class="fragment">
+        <li>They execute the same code again-and-again</li>
+        <li>Workload execution traces can be split into <strong style="text-decoration:underline;">phases</strong> that exhibit similar μArch behavior</li>
+      </ul>
+    </li>
+    <li class="fragment">SimPoint-style representative sampling
+      <ul class="fragment">
+        <li>Compute an embedding for each program interval (e.g. blocks of 100M instructions)</li>
+        <li>Cluster interval embeddings using k-means</li>
+        <li>Choose representative intervals from each cluster as <em>sampling units</em></li>
+        <!--<li>Identify basic blocks executed in a given interval (e.g. 1M instruction intervals)</li>
+        <li>Embed each interval using their ‘basic block vector’</li>
+        <li>Cluster intervals using k-means</li>-->
+      </ul>
+    </li>
+    <!--<li class="fragment" data-fragment-index="6"><strong>Hypothesis</strong>: intervals with similar embeddings → similar μArch behaviors
+      <ul class="fragment" data-fragment-index="7">
+        <li>Only execute unique intervals in low-level RTL simulation!</li>
+        <li>We can extrapolate a full workload trace from running only the sampling units in uArch simulation</li>
+      </ul>
+    </li>-->
+  </ul>
+  </div>
+  <div>
+    <h4 class="center fragment">SMARTS</h4>
+    <img class="fragment" src="/assets/smarts-d872fea5.png" />
+    <ul class="small">
+      <li class="fragment">Rigorous statistical sampling enables computation of confidence bounds
+        <ul class="fragment">
+          <li>Use random sampling on a full execution trace to derive a population sample</li>
+          <li>Central limit theorem provides confidence bounds</li>
+        </ul>
+      </li>
+      <li class="fragment">SMARTS-style random sampling
+        <ul class="fragment">
+          <li>Pick a large number of samples to take before program execution</li>
+          <li>If the sample variance is too high after simulation, then collect more sampling units</li>
+          <li>Use CLT to derive a confidence bound for the aggregate performance metric</li>
+        </ul>
+      </li>
+      <!--<li class="fragment"><strong>Prior work</strong>: "SMARTS: Accelerating Microarchitecture Simulation via Rigorous Statistical Sampling"</li>-->
+      <!--<li class="fragment">Before the workload is launched, the number of sampling units is determined
+        <ul>
+          <li>If the sample variance is too high to achieve the target confidence bound, then more sampling units must be collected</li>
+        </ul>
+      </li>
+      <li class="fragment">Sampling units are selected either using random, reservoir, or systematic sampling</li>
+      <li class="fragment">Central limit theorem is used to derive a confidence bound around the performance metrics reported by uArch simulation of the sampling units</li>-->
+    </ul>
+  </div>
+  </div>
+
+  <!--<ul class="small">
+    <li class="fragment">Sampled simulation only executes specific intervals (sampling units) of the full workload in detailed performance simulation
+    <li class="fragment">The sampling units are chosen based on embeddings or randomly</li>
+  </ul>
+
+  <div class="fragment center">
+    <img width="40%" src="./figs/multi-level-sim/sampled_simulation.png" />
+  </div>
+
+  <ul class="small">
+    <li class="fragment">Functional warmup initializes the long-lived uArch state (caches, TLB, branch predictor, prefetcher) in performance simulation</li>
+    <li class="fragment">Detailed warmup initializes the short-lived uArch state (pipeline, ROB, LSU)</li>
+    <li class="fragment">Performance metrics are collected after detailed warmup and are assumed to be representative of the sampling unit</li>
+    <li class="fragment">The sampled intervals are used to reconstruct the full IPC trace of the workload</li>
+  </ul>-->
+</section>
+
+<section>
+  <h2>Functional Warmup</h2>
+
+  <p class="fragment center">The state from a sampling unit checkpoint is only <em>architectural</em> state. The <em>microarchitectural</em> state of the uArch simulator starts at the reset state!</p>
+
+  <div class="fragment center">
+    <img width="50%" src="/assets/sampled_simulation-e594c0de.png" />
+  </div>
+
+  <ul>
+    <li class="fragment">We need to seed long-lived uArch state at the beginning of each sampling unit</li>
+    <li class="fragment">This process is called <em>functional warmup</em></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Importance of Functional Warmup</h2>
+
+  <p class="center fragment">Long-lived microarchitectural state (caches, branch predictors, prefetchers, TLBs) has a substantial impact on the performance of a sampling unit</p>
+
+  <div class="container" style="display: grid; grid-template-columns:1fr 1.4fr;">
+    <figure class="fragment center" style="display: grid; align-content: center;">
+      <img width="100%" src="/assets/livesim_amat_vs_warmup-cc3cc3c5.png" />
+      <figcaption class="small center">AMAT Error vs # of detailed warmup instructions <sup>[1]</sup></figcaption>
+    </figure>
+
+    <figure class="fragment center" style="display: grid; align-content: center;">
+      <img width="100%" src="/assets/warmup_mpki_plots-0d34a943.png" />
+      <figcaption class="small center">MPKI vs warmup vs sampling unit length for different branch predictors<sup>[2]</sup></figcaption>
+    </figure>
+  </div>
+
+  <div class="fragment">
+  <hr>
+  <div class="verysmall">
+  <p class="footnote">
+  [1]: Hassani, Sina, et al. "LiveSim: Going live with microarchitecture simulation." HPCA 2016.<br/>
+  [2]: Eeckhout, L., 2008. Sampled processor simulation: A survey. Advances in Computers. Elsevier.
+  <!--[2]: Barr, Kenneth C., et al. "Accelerating multiprocessor simulation with a memory timestamp record." ISPASS 2005.</p>-->
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2>Why RTL-Level Sampled Simulation?</h2>
+  <div class="container" style="grid-template-columns: 1.4fr 1fr;">
+    <div class="fragment">
+      <img src="/assets/why_rtl-7e39af81.svg" />
+    </div>
+    <div>
+      <ul class="smallish">
+        <li class="fragment">Eliminate modeling errors
+          <ul>
+            <li>Remaining errors can be handled via statistical techniques</li>
+          </ul>
+        </li>
+        <li class="fragment">No need to correlate performance model and RTL
+          <ul>
+            <li>Let the RTL serve as the source of truth</li>
+          </ul>
+        </li>
+        <li class="fragment">Can produce RTL-level collateral
+          <ul>
+            <li>Leverage for applications in verification and power modeling</li>
+          </ul>
+      </ul>
+    </div>
+  </div>
+
+  <p class="center fragment">This RTL-first evaluation flow is enabled by highly parameterized RTL generators and SoC design frameworks (e.g. Chipyard).</p>
+</section>
+
+<section class="center">
+  <h2>Backup Slides</h2>
 </section>
 
 <section>
@@ -547,132 +1066,6 @@
 
   <p class="center fragment"><strong>"detailed" uArch models</strong> or <strong>RTL</strong> are the only options for our performance simulator selection</p>
 
-</section>
-
-<section>
-  <h2>Simulator Metrics</h2>
-
-  <p class="center fragment">Simulation techniques span the gamut on various axes. Each simulation technique assumes <em>a particular hardware abstraction</em>.</p>
-
-  <ul class="smallish">
-    <li class="fragment"><strong>Throughput</strong>
-      <ul><li>How many instructions can be simulated per real second? (MIPS = millions of instructions per second)</li></ul>
-    </li>
-    <li class="fragment"><strong>Accuracy</strong>
-      <ul><li>Do the output metrics of the simulator match those of the modeled SoC in its real environment?</li></ul>
-    </li>
-    <li class="fragment"><strong>Startup latency</strong>
-      <ul><li>How long does it take from the moment the simulator's parameters/inputs are modified to when the first instruction is executed?</li></ul>
-    </li>
-    <li class="fragment"><strong>Metric diversity</strong>
-      <ul>
-        <li>What metrics can the simulator emit?</li>
-        <li>This is tied to the hardware abstraction used</li>
-      </ul>
-    </li>
-    <li class="fragment"><strong>Cost</strong>
-      <ul>
-        <li>What hardware platform does the simulator run on?</li>
-        <li>How much does it cost to run a simulation?</li>
-      </ul>
-    </li>
-  </ul>
-</section>
-
-<section>
-  <!--RTL vs detailed uArch vs arch vs high-level spec
-
-  We will restrict our scope to architectures which already have concrete implementations.
-  No need to high-level analytical analysis since we're trying to speed up iteration loop, not discover new accelerator or core architectures.
-  This is a separate research direction.-->
-  <h2>Existing Hardware Evaluation Techniques</h2>
-
-  <table class="comparison_table">
-    <thead><tr>
-      <th></th>
-      <th>Examples</th>
-      <th>Throughput</th>
-      <th>Latency</th>
-      <th>Accuracy</th>
-      <th>Metrics</th>
-      <th>Cost</th>
-    </tr></thead>
-    <tbody>
-    <tr class="fragment">
-      <td>Analytical Models</td>
-      <td>Aladdin, Timeloop</td>
-      <td class="bg-green">10-1000 MIPS</td>
-      <td class="bg-green">seconds</td>
-      <td class="bg-red">Wildly variable</td>
-      <td>PPA estimates</td>
-      <td class="bg-green">Minimal</td>
-    </tr>
-    <tr class="fragment">
-      <td>Architectural Simulators</td>
-      <td>spike, qemu</td>
-      <td class="bg-green">10-100+ MIPS</td>
-      <td class="bg-green">&lt;1 second</td>
-      <td class="bg-red">None</td>
-      <td>Commit trace</td>
-      <td class="bg-green">Minimal</td>
-    </tr>
-    <tr class="fragment">
-      <td>μArch Simulators</td>
-      <td>gem5, Sniper, ZSim, SST</td>
-      <td class="bg-orange">100 KIPS (gem5) - 100 MIPS (Sniper)</td>
-      <td class="bg-green">&lt;1 minute</td>
-      <td class="bg-orange">10-50% IPC error</td>
-      <td>Pipeline view / IPC trace</td>
-      <td class="bg-green">Minimal</td>
-    </tr>
-    <tr class="fragment">
-      <td>RTL Simulators</td>
-      <td>Verilator, VCS, Xcelium</td>
-      <td class="bg-red">1-10 KIPS</td>
-      <td class="bg-orange">2-10 minutes</td>
-      <td class="bg-green">Cycle-exact</td>
-      <td>RTL-level traces</td>
-      <td class="bg-green">Minimal</td>
-    </tr>
-    <tr class="fragment">
-      <td>FPGA Prototypes</td>
-      <td>HAPS, Protium</td>
-      <td class="bg-green">≈ 50 MIPS</td>
-      <td class="bg-red">2-6 hours</td>
-      <td class="bg-green">Cycle-exact</td>
-      <td>Subset of RTL signals</td>
-      <td class="bg-orange">$10k+</td>
-    </tr>
-    <tr class="fragment">
-      <td>FPGA-Based Emulators</td>
-      <td>Firesim</td>
-      <td class="bg-green">≈ 10 MIPS</td>
-      <td class="bg-red">2-6 hours</td>
-      <td class="bg-green">Cycle-exact</td>
-      <td>Subset of RTL signals</td>
-      <td class="bg-orange">$10k+</td>
-    </tr>
-    <tr class="fragment">
-      <td>ASIC-Based Emulators</td>
-      <td>ZeBu, Palladium</td>
-      <td class="bg-green">≈ 1-10 MIPS</td>
-      <td class="bg-orange">&lt;1 hour</td>
-      <td class="bg-green">Cycle-exact</td>
-      <td>RTL-level traces</td>
-      <td class="bg-red">$10M+</td>
-    </tr>
-    <tr class="fragment">
-      <td>Multi-level Sampled Simulation</td>
-      <td><strong>TidalSim</strong></td>
-      <td class="bg-green">10+ MIPS</td>
-      <td class="bg-green">&lt;1 minute</td>
-      <td class="bg-green">&lt;1% IPC error</td>
-      <td>Sampled RTL-level traces</td>
-      <td class="bg-green">Minimal</td>
-    </tr>
-    </tbody>
-  </table>
-  <!-- uArch Perf Sim is nearly there! Can we improve its accuracy or improve its throughput to get us to the golden promise land? -->
 </section>
 
 <section>
@@ -921,77 +1314,6 @@ Because simulators can have significant errors, which are completely unknown, on
 </section>
 
 <section>
-  <h2>Sampled Simulation</h2>
-
-  <p class="center fragment">Instead of running the entire program in uArch simulation, run the entire program in <em>functional simulation</em> and only run <em>samples</em> in uArch simulation</p>
-
-  <div class="fragment center">
-    <img width="60%" src="/assets/sampled_simulation0-93b238a2.png" />
-  </div>
-
-  <p class="fragment center">The full workload is represented by a selection of <em>sampling units</em>.</p>
-
-  <ol class="smallish">
-    <li class="fragment">How should sampling units be selected?</li> <!-- sampling methodology -->
-    <li class="fragment">How can we accurately estimate the performance of a sampling unit?</li> <!-- functional and detailed warmup -->
-    <li class="fragment">How can we estimate errors when extrapolating from sampling units?</li> <!-- error bounding via CLT or other heuristics -->
-  </ol>
-</section>
-
-<section>
-  <h2 style="font-size:1.8rem;">Representative Sampling using Phase Behavior of Programs</h2>
-
-  <div class="container">
-  <div>
-  <ul style="font-size:95%">
-    <li class="fragment" data-fragment-index="1">Program execution traces aren’t random
-      <ul class="fragment" data-fragment-index="2">
-        <li>They execute the same code again-and-again</li>
-        <li>Workload execution traces can be split into <strong style="text-decoration:underline;">phases</strong> that exhibit similar μArch behavior</li>
-      </ul>
-    </li>
-    <li class="fragment" data-fragment-index="4"><strong>Prior work</strong>: SimPoint
-      <ul class="fragment" data-fragment-index="5">
-        <li>Compute an embedding for each program interval (e.g. blocks of 100M instructions)</li>
-        <li>Cluster interval embeddings using k-means</li>
-        <li>Choose representative intervals from each cluster as <em>sampling units</em></li>
-        <!--<li>Identify basic blocks executed in a given interval (e.g. 1M instruction intervals)</li>
-        <li>Embed each interval using their ‘basic block vector’</li>
-        <li>Cluster intervals using k-means</li>-->
-      </ul>
-    </li>
-    <li class="fragment" data-fragment-index="6"><strong>Hypothesis</strong>: intervals with similar embeddings → similar μArch behaviors
-      <ul class="fragment" data-fragment-index="7">
-        <!--<li>Only execute unique intervals in low-level RTL simulation!</li>-->
-        <li>We can extrapolate a full workload trace from running only the sampling units in uArch simulation</li>
-      </ul>
-    </li>
-  </ul>
-  </div>
-  <div class="fragment" data-fragment-index="3" style="display:grid; align-content: center; justify-items:center;">
-    <img src="/assets/simpoint-gzip_phases-c68f8d72.gif" />
-    <img src="/assets/simpoint-gcc_phases-2046d2b5.gif" />
-  </div>
-  </div>
-
-  <!--<ul class="small">
-    <li class="fragment">Sampled simulation only executes specific intervals (sampling units) of the full workload in detailed performance simulation
-    <li class="fragment">The sampling units are chosen based on embeddings or randomly</li>
-  </ul>
-
-  <div class="fragment center">
-    <img width="40%" src="./figs/multi-level-sim/sampled_simulation.png" />
-  </div>
-
-  <ul class="small">
-    <li class="fragment">Functional warmup initializes the long-lived uArch state (caches, TLB, branch predictor, prefetcher) in performance simulation</li>
-    <li class="fragment">Detailed warmup initializes the short-lived uArch state (pipeline, ROB, LSU)</li>
-    <li class="fragment">Performance metrics are collected after detailed warmup and are assumed to be representative of the sampling unit</li>
-    <li class="fragment">The sampled intervals are used to reconstruct the full IPC trace of the workload</li>
-  </ul>-->
-</section>
-
-<section>
   <h2>Random Sampling</h2>
   <ul>
     <li class="fragment"><strong>Prior work</strong>: "SMARTS: Accelerating Microarchitecture Simulation via Rigorous Statistical Sampling"</li>
@@ -1006,50 +1328,7 @@ Because simulators can have significant errors, which are completely unknown, on
 </section>
 
 <section>
-  <h2>Functional Warmup</h2>
-
-  <p class="fragment center">The state from a sampling unit checkpoint is only <em>architectural</em> state. The <em>microarchitectural</em> state of the uArch simulator starts at the reset state!</p>
-
-  <div class="fragment center">
-    <img width="50%" src="/assets/sampled_simulation-e594c0de.png" />
-  </div>
-
-  <ul>
-    <li class="fragment">We need to seed long-lived uArch state at the beginning of each sampling unit</li>
-    <li class="fragment">This process is called <em>functional warmup</em></li>
-  </ul>
-</section>
-
-<section>
-  <h2>Importance of Functional Warmup</h2>
-
-  <p class="center fragment">Long-lived microarchitectural state (caches, branch predictors, prefetchers, TLBs) has a substantial impact on the performance of a sampling unit</p>
-
-  <div class="container" style="display: grid; grid-template-columns:1fr 1.4fr;">
-    <figure class="fragment center" style="display: grid; align-content: center;">
-      <img width="100%" src="/assets/livesim_amat_vs_warmup-cc3cc3c5.png" />
-      <figcaption class="small center">AMAT Error vs # of detailed warmup instructions <sup>[1]</sup></figcaption>
-    </figure>
-
-    <figure class="fragment center" style="display: grid; align-content: center;">
-      <img width="100%" src="/assets/warmup_mpki_plots-0d34a943.png" />
-      <figcaption class="small center">MPKI vs warmup vs sampling unit length for different branch predictors<sup>[2]</sup></figcaption>
-    </figure>
-  </div>
-
-  <div class="fragment">
-  <hr>
-  <div class="verysmall">
-  <p class="footnote">
-  [1]: Hassani, Sina, et al. "LiveSim: Going live with microarchitecture simulation." HPCA 2016.<br/>
-  [2]: Eeckhout, L., 2008. Sampled processor simulation: A survey. Advances in Computers. Elsevier.
-  <!--[2]: Barr, Kenneth C., et al. "Accelerating multiprocessor simulation with a memory timestamp record." ISPASS 2005.</p>-->
-  </div>
-  </div>
-</section>
-
-<section>
-  <h2>Overview of Sampling Methodologies</h2>
+  <h2>Comparison Between Sampling Techniques</h2>
 
   <div class="fragment center">
     <img width="50%" src="/assets/sampled_simulation-e594c0de.png" />
@@ -1123,86 +1402,9 @@ Because simulators can have significant errors, which are completely unknown, on
   - so we must use some kind of sampled rtl sim with functional uarch warmup models ganged with a functional isa model
 --></section>
 
-<section>
-<section class="center">
-  <h2 class="center">3. What's New: Differences from Prior Work</h2>
-
-  <ul>
-    <li class="fragment">We leverage <strong>RTL simulation</strong> for performance/power estimation + RTL-level collateral generation</li>
-    <li class="fragment">We will explore sampled simulation with <em>accelerators</em></li>
-    <li class="fragment">We will perform validation of functional warmup models against their equivalent RTL structures</li>
-  </ul>
-</section>
-
+<!-- these slides have been replaced by a single slide in the background section -->
 <!--<section>
-  <h2>Treating Simulation as a Sliding Tradeoff Between Latency, Throughput, and Accuracy</h2>
 </section>-->
-
-<section>
-  <h2>Why RTL-Level Sampled Simulation?</h2>
-  <ul>
-    <li class="fragment">No need to perform correlation between perf model and RTL
-      <ul>
-        <li>Error is introduced by sampling, but it can be understood/bounded with statistical methods</li>
-        <li>Additional error comes from modeling RTL constructs (which is often done poorly and can't be bounded)</li>
-      </ul>
-    </li>
-    <li class="fragment">Possible to derive accurate PPA numbers
-      <ul>
-        <li>Real frequency and area numbers from synthesis for proper physically constrained DSE</li>
-        <li>Can extrapolate up to full power traces</li>
-      </ul>
-    </li>
-    <li class="fragment">Leverage special collateral (waveforms) from RTL simulation
-      <ul>
-        <li>Power macromodel construction and training</li>
-        <li>Coverpoint synthesis</li>
-      </ul>
-    </li>
-  </ul>
-  <!--no need to add modeling error (unbounded) on top of sampling error (which can often be bounded or at least understood)
-  the abstraction closest to the ultimate PPA
-  for optimizations that involve uarch, we should simulate accurate uarch - this fidelity is required for proper dse that is properly physically constrained-->
-</section>
-
-<section>
-  <h2>Why RTL-Level Sampled Simulation Now?</h2>
-
-  <div class="r-stack">
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="50%" src="/assets/esp_overview-2fbaaa81.png">
-      <figcaption class="small center">OpenESP RTL generator overview.</figcaption>
-    </div>
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="50%" src="/assets/esp_tiles-4643cf63.png">
-      <figcaption class="small center">The organization of tiles in OpenESP.</figcaption>
-    </div>
-    <div class="fragment fade-in" style="display: grid; place-items: center;">
-      <img width="20%" src="/assets/rocketchip-f4381db6.png">
-      <figcaption class="small center">The RISC-V Rocket Core.</figcaption>
-    </div>
-  </div>
-
-  <ul>
-    <li class="fragment">New SoC-level RTL generator frameworks (e.g. Chipyard, OpenESP, OpenPiton) enable RTL-level design space exploration</li>
-    <li class="fragment">RTL generators are highly parameterized and new design languages (e.g. Chisel) make it easier to build new microarchitectural features directly in RTL</li>
-  </ul>
-</section>
-
-<!--<section>
-  <h2>Heterogeneous SoCs</h2>
-  Accelerators and IO modeling, new embedding strategies, how to model memory interconnect traffic situations that can cause variance in accelerator performance
-</section>-->
-
-<!--<section>
-  <h2>What's New</h2>
-
-  <ul>
-    <li class="fragment">No prior work on ISA ↔ μArch models ↔ RTL multi-level simulation with functional warmup</li>
-    <li class="fragment">No substantial work on binary-agnostic interval embeddings</li>
-    <li class="fragment">No one has leveraged the special collateral (waveforms + high-fidelity performance metrics) you can only get from RTL simulation</li>
-  </ul>
-</section>--></section>
 
 <section>
 <section class="center">
