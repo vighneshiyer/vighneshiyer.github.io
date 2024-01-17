@@ -49,12 +49,12 @@
     <li class="fragment"><strong>What</strong>: What is the thing I want to build?</li>
     <li class="fragment"><strong>Prior work</strong> + <strong>what's new</strong> about my proposal?</li>
     <li class="fragment"><strong>How (pt 1)</strong>: A prototype implementation of my proposal</li>
+    <li class="fragment"><strong>Case studies</strong> / <strong>applications</strong>: How will we use what we built to do something that was impossible before?</li>
     <li class="fragment"><strong>How (pt 2)</strong>: Addressing faults of and generalizing the prototype
       <ul style="font-size: 1.4rem;">
         <li>Each point roughly corresponds to a thesis chapter</li>
       </ul>
     </li>
-    <li class="fragment"><strong>Case studies</strong> / <strong>applications</strong>: How will we use what we built to do something that was impossible before?</li>
     <li class="fragment"><strong>Thesis outline</strong> and paper plan</li>
   </ol>
 </section>
@@ -353,7 +353,7 @@
     <li class="fragment">Is <strong>accurate</strong> enough to use confidently for microarchitectural DSE</li>
     <li class="fragment">Has <strong>low latency</strong> to not bottleneck the hardware iteration loop</li>
     <li class="fragment">Can produce <strong>RTL-level collateral</strong> for performance or functional verification</li>
-    <li>Can run <strong>real workloads</strong> by identifying unique aspects of the program automatically<!--with respect to power, performance, and functionality--></li>
+    <li class="fragment">Can run <strong>real workloads</strong> by identifying unique aspects of the program automatically<!--with respect to power, performance, and functionality--></li>
     </li>
   </ol>
 </section>
@@ -1408,7 +1408,7 @@ Because simulators can have significant errors, which are completely unknown, on
 
 <section>
 <section class="center">
-  <h2>4. How (pt 1): TidalSim v0.1 (A Prototype Implementation)</h2>
+  <h2>4. How (pt 1): TidalSim v0.1<br />(A Prototype Implementation)</h2>
 
   <ul>
     <li>Implementation details of the TidalSim v0.1 prototype</li>
@@ -1429,8 +1429,134 @@ Because simulators can have significant errors, which are completely unknown, on
 -->
 
 <section style="text-align: center;">
-  <h2>Overview of TidalSim Flow</h2>
+  <h2>Overview of the TidalSim v0.1 Flow</h2>
   <img src="/assets/overview-cbf37909.svg" />
+</section>
+
+<section>
+  <h2>Implementation Details For TidalSim v0.1</h2>
+  <div class="container" style="grid-template-columns: 1.2fr 1fr;">
+  <div>
+  <ul class="smallish">
+    <li class="fragment">Basic block identification
+      <ul><li>BB identification from spike commit log or from static ELF analysis</li></ul>
+    </li>
+    <li class="fragment">Basic block embedding of intervals</li>
+    <li class="fragment">Clustering and checkpointing
+      <ul>
+        <li>k-means, PCA-based n-clusters</li>
+        <li>spike-based checkpoints</li>
+      </ul>
+    </li>
+    <li class="fragment">RTL simulation and performance metric extraction
+      <ul><li>Custom force-based RTL state injection, out-of-band IPC measurement</li></ul>
+    </li>
+    <li class="fragment">Extrapolation
+      <ul><li>Estimate IPC of each interval based on its embedding and distances to RTL-simulated intervals</li></ul>
+    </li>
+  </ul>
+  </div>
+  <div style="display:grid; align-content: center;">
+    <img src="/assets/overview-cbf37909.svg" />
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2 style="font-size: 1.8rem;">Functional Cache Warmup with Memory Timestamp Record</h2>
+
+  <p class="smallish center fragment">Memory Timestamp Record (MTR)<sup>[1]</sup> is a cache warmup model that can be constructed once and reused for many different cache parameterizations</p>
+
+  <div class="r-stack center smallish">
+    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
+      <img width="80%" src="/assets/mtr_entry_update-ae6a1563.svg"/>
+      <figcaption>Updating entries in the (MTR) data structure from an memory access trace</figcaption>
+    </div>
+
+    <div class="fragment fade-in" style="display: grid; place-items: center;">
+      <img width="60%" src="/assets/mtr_reconstruction-fb41ad02.svg"/>
+      <figcaption>Reconstructing a cache state from a MTR checkpoint for a specific cache parameterization</figcaption>
+    </div>
+  </div>
+
+  <div>
+    <hr>
+    <div class="verysmall">
+    <p class="footnote">
+    [1]: Barr, Kenneth C., et al. "Accelerating multiprocessor simulation with a memory timestamp record." ISPASS 2005.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>IPC Trace Prediction: aha-mont64</h2>
+  <ul>
+    <li class="fragment">Montgomery multiplication from Embench (aha-mont64)</li>
+    <li class="fragment"><code>N=1000</code>, <code>C=12</code></li>
+    <li class="fragment">Full RTL sim takes 10 minutes, TidalSim runs in 10 seconds</li>
+    <li class="fragment">IPC is correlated (mean error &lt;5%)<!--; very weak correlation between distance and error--></li>
+  </ul>
+  <img class="fragment" src="/assets/aha-mont64_results-9a84d301.svg" />
+</section>
+
+<section>
+  <h2>IPC Trace Prediction: huffbench</h2>
+  <ul>
+    <li class="fragment">Huffman compression from Embench (huffbench)</li>
+    <li class="fragment"><code>N=10000</code>, <code>C=18</code></li>
+    <li class="fragment">Full RTL sim takes 15 minutes, TidalSim runs in 10 seconds</li>
+    <li class="fragment">Larger IPC variance</li>
+  </ul>
+  <img class="fragment" src="/assets/huffbench_results-4c2e2b24.svg" />
+</section>
+
+<section>
+  <h2>IPC Trace Prediction: wikisort</h2>
+  <ul>
+    <li class="fragment">Merge sort benchmark from Embench (wikisort)</li>
+    <li class="fragment"><code>N=10000</code>, <code>C=18</code></li>
+    <li class="fragment">Full RTL sim takes 15 minutes, TidalSim runs in 10 seconds</li>
+    <li class="fragment">Can capture general trends and time-domain IPC variation</li>
+  </ul>
+  <img class="fragment" src="/assets/wikisort_results-ec1daa41.svg" />
+</section>
+
+<!-- Add box and whiskers IPC error plot -->
+<section>
+  <h2>Aggregate IPC Prediction for Embench Suite</h2>
+  <div class="center">
+    <img src="/assets/embench_ipc_error-525b1b52.svg" style="margin-bottom:0;" />
+  </div>
+  <p class="center fragment">Typical IPC error (<strong>without</strong> functional warmup and with fine time-domain precision of 10k instructions) <strong>is &lt; 5%</strong></p>
+</section>
+
+<section>
+  <h2>From Tidalsim v0.1 to v1</h2>
+
+  <!-- Things to do before calling the first prototype complete: -->
+
+  <ul>
+    <li class="fragment">Functional L1-only cache warmup</li>
+    <li class="fragment">Functional branch predictor warmup</li>
+    <!--<li class="fragment">Use robust checkpointing fork of spike
+      <ul>
+        <li>Better arch state initialization technique <span class="small">(via program snippet + selective forces depending on bits that can't be set via ISA)</span></li>
+      </ul>
+    </li>-->
+    <li class="fragment">Characterization on other baremetal workloads
+      <ul>
+        <li>dhrystone, coremark, riscv-tests benchmarks, MiBench</li>
+      </ul>
+    </li>
+    <li class="fragment">Explore more sophisticated clustering and extrapolation techniques</li>
+    <li class="fragment">Demonstrate we can hit <strong>&lt;1% IPC error</strong></li>
+  </ul>
+
+  <p class="fragment center">These milestones will set the stage for the qual proposal</p>
+</section>
+
+<section class="center">
+  <h2>Backup Slides</h2>
 </section>
 
 <section>
@@ -1586,32 +1712,6 @@ cycles,instret
 </section>
 
 <section>
-  <h2 style="font-size: 1.8rem;">Functional Cache Warmup with Memory Timestamp Record</h2>
-
-  <p class="smallish center fragment">Memory Timestamp Record (MTR)<sup>[1]</sup> is a cache warmup model that can be constructed once and reused for many different cache parameterizations</p>
-
-  <div class="r-stack center smallish">
-    <div class="fragment fade-in-then-out" style="display: grid; place-items: center;">
-      <img width="80%" src="/assets/mtr_entry_update-ae6a1563.svg"/>
-      <figcaption>Updating entries in the (MTR) data structure from an memory access trace</figcaption>
-    </div>
-
-    <div class="fragment fade-in" style="display: grid; place-items: center;">
-      <img width="60%" src="/assets/mtr_reconstruction-fb41ad02.svg"/>
-      <figcaption>Reconstructing a cache state from a MTR checkpoint for a specific cache parameterization</figcaption>
-    </div>
-  </div>
-
-  <div class="fragment">
-    <hr>
-    <div class="verysmall">
-    <p class="footnote">
-    [1]: Barr, Kenneth C., et al. "Accelerating multiprocessor simulation with a memory timestamp record." ISPASS 2005.</p>
-    </div>
-  </div>
-</section>
-
-<section>
   <h2>Extrapolation</h2>
   <ul>
     <li class="fragment">We gather performance metrics for one sampling unit in each cluster that is taken to be representative of that cluster ($\vec{p}$)</li>
@@ -1622,75 +1722,253 @@ cycles,instret
       </ul>
     <li class="fragment">Compute the estimated performance of all intervals to extrapolate to a full performance trace</li>
   </ul>
-</section>
-
-<section>
-  <h2>IPC Trace Prediction: aha-mont64</h2>
-  <ul>
-    <li class="fragment">Montgomery multiplication from Embench (aha-mont64)</li>
-    <li class="fragment"><code>N=1000</code>, <code>C=12</code></li>
-    <li class="fragment">Full RTL sim takes 10 minutes, TidalSim runs in 10 seconds</li>
-    <li class="fragment">IPC is correlated (mean error &lt;5%)<!--; very weak correlation between distance and error--></li>
-  </ul>
-  <img class="fragment" src="/assets/aha-mont64_results-9a84d301.svg" />
-</section>
-
-<section>
-  <h2>IPC Trace Prediction: huffbench</h2>
-  <ul>
-    <li class="fragment">Huffman compression from Embench (huffbench)</li>
-    <li class="fragment"><code>N=10000</code>, <code>C=18</code></li>
-    <li class="fragment">Full RTL sim takes 15 minutes, TidalSim runs in 10 seconds</li>
-    <li class="fragment">Larger IPC variance</li>
-  </ul>
-  <img class="fragment" src="/assets/huffbench_results-4c2e2b24.svg" />
-</section>
-
-<section>
-  <h2>IPC Trace Prediction: wikisort</h2>
-  <ul>
-    <li class="fragment">Merge sort benchmark from Embench (wikisort)</li>
-    <li class="fragment"><code>N=10000</code>, <code>C=18</code></li>
-    <li class="fragment">Full RTL sim takes 15 minutes, TidalSim runs in 10 seconds</li>
-    <li class="fragment">Can capture general trends and time-domain IPC variation</li>
-  </ul>
-  <img class="fragment" src="/assets/wikisort_results-ec1daa41.svg" />
-</section>
-
-<section>
-  <h2>Aggregate IPC Prediction for Embench Suite</h2>
-  <div class="center">
-    <img src="/assets/embench_ipc_error-525b1b52.svg" style="margin-bottom:0;" />
-  </div>
-  <p class="center fragment">Typical IPC error (<strong>without</strong> functional warmup and with fine time-domain precision of 10k instructions) <strong>is &lt; 5%</strong></p>
-</section>
-
-<!-- Add box and whiskers IPC error plot -->
-
-<section>
-  <h2>From Tidalsim v0.1 to v1</h2>
-
-  <!-- Things to do before calling the first prototype complete: -->
-
-  <ul>
-    <li class="fragment">Functional L1-only cache warmup</li>
-    <li class="fragment">Functional branch predictor warmup</li>
-    <li class="fragment">Use robust checkpointing fork of spike
-      <ul>
-        <li>Better arch state initialization technique <span class="small">(via program snippet + selective forces depending on bits that can't be set via ISA)</span></li>
-      </ul>
-    </li>
-    <li class="fragment">Characterization on other baremetal workloads
-      <ul>
-        <li>dhrystone, coremark, riscv-tests benchmarks, MiBench</li>
-      </ul>
-    </li>
-    <li class="fragment">Explore more sophisticated clustering and extrapolation techniques</li>
-    <li class="fragment"><strong>Demonstrate we can hit &lt;1% IPC error</strong></li>
-  </ul>
-
-  <p class="fragment center">These milestones will set the stage for the qual proposal</p>
 </section></section>
+
+<section>
+<section class="center">
+  <h2>5. Case Studies / Applications</h2>
+  <ol style="list-style-type: lower-alpha;">
+    <li class="fragment">Hardware parameter DSE / microarchitecture optimization</li>
+    <li class="fragment">Coverpoint synthesis for verification</li>
+  </ol>
+</section>
+
+<section>
+  <h2>5.a: TidalSim for HW Parameter DSE</h2>
+
+  <div class="center">
+    <img width="60%" src="/assets/uarch_iteration_flow_tidalsim_simple-8d551231.svg" />
+  </div>
+
+  <ul>
+    <li class="fragment">Evaluate the impact of cache sizing and configuration
+      <ul>
+        <li>Cache sizing between L1d and L1i</li>
+        <li>Balancing capacity between 2-level cache hierarchies</li>
+        <li>Unified vs separate I/D L2 caches</li>
+      </ul>
+    <li class="fragment">Compare TidalSim for evaluating these tradeoffs on real workloads vs RTL simulation and FireSim</li>
+  </ul>
+</section>
+
+<section>
+  <h2>6.a: Leveraging Chisel for RTL State Injection</h2>
+
+  <ul>
+    <li class="fragment">Current test harness is hardcoded for one Chipyard SoC design point</li>
+    <li class="fragment">Use a Chisel API to semantically mark arch and uArch state and use a FIRRTL pass to generate a state-injecting test harness</li>
+  </ul>
+
+  <pre class="fragment"><code class="language-scala" data-trim data-noescape data-line-numbers="|3">
+class RegFile(n: Int, w: Int, zero: Boolean = false) {
+  val rf = Mem(n, UInt(w.W))
+  (0 until n).map { archStateAnnotation(rf(n), Riscv.I.GPR(n)) }
+  // ...
+}
+  </code></pre>
+
+  <pre class="fragment"><code class="language-scala" data-trim data-noescape data-line-numbers="|4-6|5">
+class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
+  // ...
+  val tag_array = SyncReadMem(nSets, Vec(nWays, UInt(metabits.W)))
+  (0 until nSets).zip((0 until nWays)).map { case (set, way) =&gt;
+    uArchStateAnnotation(tag_array.read(set)(way), Uarch.L1.tag(set, way, cacheType=I)
+  }
+}
+  </code></pre>
+</section>
+
+<section>
+  <h2>6.b: TidalSim for Verification</h2>
+
+  <div class="center">
+    <img width="60%" src="/assets/uarch_iteration_flow_tidalsim-ba904d05.svg" />
+  </div>
+
+  <ul>
+    <li class="fragment">Some verification techniques require numerous dynamic waveforms for analysis
+      <ul>
+        <li><strong>Specification mining</strong> for invariant synthesis or RTL bug localization</li>
+        <li><strong>Coverpoint synthesis</strong> for tuning stimulus generators towards bugs</li>
+      </ul>
+    </li>
+    <li class="fragment">TidalSim provides a way to extract small, unique RTL waveforms from large workloads with low latency</li>
+  </ul>
+</section>
+
+<section>
+  <h2>6.b: Past Work on Specification Mining</h2>
+
+  <ul>
+    <li>Take waveforms from RTL simulation and attempt to mine unfalsified specifications involving 2+ RTL signals<sup>[1]</sup></li>
+  </ul>
+
+  <div class="center fragment">
+    <img width="50%" src="/assets/spec_mining_flow-05f9b63a.svg" />
+  </div>
+
+  <ul>
+    <li>Specifications are constructed from LTL templates
+      <ul>
+        <li><strong>Until</strong>: $ \mathbf{G}\, (a \rightarrow \mathbf{X}\, (a\, \mathbf{U}\, b)) $</li>
+        <li><strong>Next</strong>: $ \mathbf{G}\, (a \rightarrow \mathbf{X}\, b) $</li>
+        <li><strong>Eventual</strong>: $ \mathbf{G}\, (a \rightarrow \mathbf{X F}\, b) $</li>
+        <li>$a$ and $b$ are atomic propositions constructed from signals in the RTL design</li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="fragment">
+  <hr>
+  <div class="verysmall">
+    <p class="footnote">
+    [1]: Iyer, Vighnesh, et. al., 2019. RTL bug localization through LTL specification mining. MEMOCODE.
+    </p>
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2 style="font-size:1.8rem;">6.b: Specification Mining Used for RTL Bug Localization</h2>
+
+    <p class="fragment center small">Introduce a bug in the riscv-mini cache</p>
+
+  <pre class="fragment"><code class="language-diff" data-trim data-noescape>
+-  hit := v(idx_reg) && rmeta.tag === tag_reg
++  hit := v(idx_reg) && rmeta.tag =/= tag_reg
+  </code></pre>
+
+  <ul class="small">
+    <li class="fragment">This bug does not affect most ISA tests but a multiply benchmark failed by hanging.</li>
+    <li class="fragment">After checking the VCD against the mined properties, we found these violations ranked by time of violation</li>
+  </ul>
+
+  <table class="fragment" style="font-size: 1.2rem;">
+    <thead><tr>
+      <th>Template</th>
+      <th>$\textbf{a}$</th>
+      <th>$\textbf{b}$</th>
+      <th>Violated at Time</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+      <td>Until</td>
+      <td><code>Tile.arb_io_dcache_r_ready</code></td>
+      <td><code>Tile.dcache.hit</code></td>
+      <td>418</td>
+    </tr>
+    <tr>
+      <td>Until</td>
+      <td><code>Tile.dcache_io_nasti_r_valid</code></td>
+      <td><code>Tile.dcache.hit</code></td>
+      <td>418<td>
+    </tr>
+    <tr>
+      <td>Until</td>
+      <td><code>Tile.dcache.is_alloc</code></td>
+      <td><code>Tile.dcache.hit</code></td>
+      <td>418</td>
+    </tr>
+    <tr>
+      <td>Until</td>
+      <td><code>Tile.arb.io_dcache_ar_ready</code></td>
+      <td><code>Tile.arb_io_nasti_r_ready</code></td>
+      <td>640</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <p class="center fragment small">The violated properties point to an anomaly with the <code>hit</code> signal and localize the bug</p>
+</section>
+
+<section>
+  <h2 style="font-size:1.8rem;">6.b: Coverpoint Synthesis as Complement of Spec Mining</h2>
+
+  <ul>
+    <li class="fragment"><em>Specification mining</em> takes waveforms of an RTL design and synthesizes properties that are unfalsified on all traces</li>
+    <li class="fragment">Coverpoint synthesis is an alternative take on spec mining where we synthesize μArch properties that we want to see more of
+      <ul>
+        <li>Instead of monitoring properties for falsification, we monitor them for <em>completion</em></li>
+        <li>Properties that are <em>completed</em>, but not too often, are good candidates for coverpoints</li>
+      </ul>
+    </li>
+    <!--<li class="fragment">This technique is far more effective if we have <em>many unique, realistic traces</em>
+      <ul>
+        <li class="fragment">Leverage interval clustering and sampled RTL simulation</li>
+      </ul>
+    </li>
+    -->
+    <li class="fragment">Evaluation:
+      <ul>
+        <li>Synthesize coverpoints on Rocket using waveforms from TidalSim and regular RTL sim with the same compute budget</li>
+        <li>Demonstrate we can synthesize more, and more interesting coverpoints using TidalSim data</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<!-- <section>
+  <h2>Performance and Power Evaluation</h2>
+  <ul>
+    <li class="fragment">Trace extraction for power model construction
+    <ul>
+      <li>Currently power macromodels are built + trained only on workloads that can run in RTL simulation</li>
+      <li>TidalSim enables extraction of unique, short traces from full workloads</li>
+      <li>Potential to improve signal selection and uncover holes in training datasets</li>
+    </ul>
+    </li>
+  </ul>
+</section>
+-->
+
+<!--
+<section>
+  <h2>Issues with HW Fuzzer Evaluations</h2>
+  <ul>
+    <li class="fragment"><em>Last time</em>: discussed deficiencies in existing HW fuzzing evaluations due to bad success/feedback metrics
+    <ul>
+      <li class="fragment">Structural coverage is too easy to hit</li>
+      <li class="fragment">Time to rediscover old bugs is too biased and forces us to use old RTL</li>
+    </ul>
+    </li>
+    <li class="fragment">Bad metrics ⮕ dubious conclusions
+    <ul>
+      <li>We should save &gt;50% of mutated stimuli (vs &lt;1% for SW fuzzers)</li>
+      <li>RTL-level feedback is useless for hitting bugs or improving coverage (vs SW fuzzers making no progress without feedback)</li>
+    </ul>
+    </li>
+  </ul>
+  <p class="center fragment">Can we synthesize metrics that lead to reasonable HW fuzzer evaluations?</p>
+</section>
+-->
+
+<!--
+<section>
+  <h2>Coverpoint Synthesis</h2>
+  <ul>
+    <li class="fragment"><em>Specification mining</em> takes waveforms of an RTL design and synthesizes properties involving 2+ signals that are unfalsified on all traces</li>
+    <li class="fragment">Coverpoint synthesis is an alternative take on spec mining where we synthesize μArch properties that we want to see more of</li>
+    <li class="fragment">This technique is far more effective if we have <em>many unique, realistic traces</em>
+      <ul>
+        <li class="fragment">Leverage interval clustering and sampled RTL simulation</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+-->
+
+<!--
+<section>
+  <h2>Bootstrapping Fuzzing</h2>
+  <ul>
+    <li class="fragment">Most HW fuzzers start from reset and run a binary on the SoC to hit some objective</li>
+    <li class="fragment">Interesting objectives are harder to hit from reset vs from the middle of a workload
+    <ul><li>e.g. post-OS boot, in the middle of an application</li></ul>
+    </li>
+    <li class="fragment">Arch and μArch checkpoints from TidalSim guarantee reachability and provides starting points for HW fuzzers</li>
+  </ul>
+</section>
+--></section>
 
 <section>
   <section class="center">
@@ -2101,252 +2379,6 @@ val memTxGen: Gen[MemTx] = Gen[MemTx].uniform
   <h2>8. Sampled Simulation with Accelerators</h2>
 </section>
 -->
-<section>
-<section class="center">
-  <h2>6. Case Studies / Applications</h2>
-  <ol style="list-style-type: lower-alpha;">
-    <li class="fragment">Hardware parameter DSE / microarchitecture optimization</li>
-    <li class="fragment">Coverpoint synthesis for verification</li>
-  </ol>
-</section>
-
-<section>
-  <h2>6.a: TidalSim for HW Parameter DSE</h2>
-
-  <div class="center">
-    <img width="60%" src="/assets/uarch_iteration_flow_tidalsim-ba904d05.svg" />
-  </div>
-
-  <ul>
-    <li class="fragment">Evaluate the impact of cache sizing and configuration
-      <ul>
-        <li>Cache sizing between L1d and L1i</li>
-        <li>Balancing capacity between 2-level cache hierarchies</li>
-        <li>Unified vs separate I/D L2 caches</li>
-      </ul>
-    <li class="fragment">Compare TidalSim for evaluating these tradeoffs on real workloads vs RTL simulation and FireSim</li>
-  </ul>
-</section>
-
-<section>
-  <h2>6.a: Leveraging Chisel for RTL State Injection</h2>
-
-  <ul>
-    <li class="fragment">Current test harness is hardcoded for one Chipyard SoC design point</li>
-    <li class="fragment">Use a Chisel API to semantically mark arch and uArch state and use a FIRRTL pass to generate a state-injecting test harness</li>
-  </ul>
-
-  <pre class="fragment"><code class="language-scala" data-trim data-noescape data-line-numbers="|3">
-class RegFile(n: Int, w: Int, zero: Boolean = false) {
-  val rf = Mem(n, UInt(w.W))
-  (0 until n).map { archStateAnnotation(rf(n), Riscv.I.GPR(n)) }
-  // ...
-}
-  </code></pre>
-
-  <pre class="fragment"><code class="language-scala" data-trim data-noescape data-line-numbers="|4-6|5">
-class L1MetadataArray[T &lt;: L1Metadata] extends L1HellaCacheModule()(p) {
-  // ...
-  val tag_array = SyncReadMem(nSets, Vec(nWays, UInt(metabits.W)))
-  (0 until nSets).zip((0 until nWays)).map { case (set, way) =&gt;
-    uArchStateAnnotation(tag_array.read(set)(way), Uarch.L1.tag(set, way, cacheType=I)
-  }
-}
-  </code></pre>
-</section>
-
-<section>
-  <h2>6.b: TidalSim for Verification</h2>
-
-  <div class="center">
-    <img width="60%" src="/assets/uarch_iteration_flow_tidalsim-ba904d05.svg" />
-  </div>
-
-  <ul>
-    <li class="fragment">Some verification techniques require numerous dynamic waveforms for analysis
-      <ul>
-        <li><strong>Specification mining</strong> for invariant synthesis or RTL bug localization</li>
-        <li><strong>Coverpoint synthesis</strong> for tuning stimulus generators towards bugs</li>
-      </ul>
-    </li>
-    <li class="fragment">TidalSim provides a way to extract small, unique RTL waveforms from large workloads with low latency</li>
-  </ul>
-</section>
-
-<section>
-  <h2>6.b: Past Work on Specification Mining</h2>
-
-  <ul>
-    <li>Take waveforms from RTL simulation and attempt to mine unfalsified specifications involving 2+ RTL signals<sup>[1]</sup></li>
-  </ul>
-
-  <div class="center fragment">
-    <img width="50%" src="/assets/spec_mining_flow-05f9b63a.svg" />
-  </div>
-
-  <ul>
-    <li>Specifications are constructed from LTL templates
-      <ul>
-        <li><strong>Until</strong>: $ \mathbf{G}\, (a \rightarrow \mathbf{X}\, (a\, \mathbf{U}\, b)) $</li>
-        <li><strong>Next</strong>: $ \mathbf{G}\, (a \rightarrow \mathbf{X}\, b) $</li>
-        <li><strong>Eventual</strong>: $ \mathbf{G}\, (a \rightarrow \mathbf{X F}\, b) $</li>
-        <li>$a$ and $b$ are atomic propositions constructed from signals in the RTL design</li>
-      </ul>
-    </li>
-  </ul>
-
-  <div class="fragment">
-  <hr>
-  <div class="verysmall">
-    <p class="footnote">
-    [1]: Iyer, Vighnesh, et. al., 2019. RTL bug localization through LTL specification mining. MEMOCODE.
-    </p>
-  </div>
-  </div>
-</section>
-
-<section>
-  <h2 style="font-size:1.8rem;">6.b: Specification Mining Used for RTL Bug Localization</h2>
-
-    <p class="fragment center small">Introduce a bug in the riscv-mini cache</p>
-
-  <pre class="fragment"><code class="language-diff" data-trim data-noescape>
--  hit := v(idx_reg) && rmeta.tag === tag_reg
-+  hit := v(idx_reg) && rmeta.tag =/= tag_reg
-  </code></pre>
-
-  <ul class="small">
-    <li class="fragment">This bug does not affect most ISA tests but a multiply benchmark failed by hanging.</li>
-    <li class="fragment">After checking the VCD against the mined properties, we found these violations ranked by time of violation</li>
-  </ul>
-
-  <table class="fragment" style="font-size: 1.2rem;">
-    <thead><tr>
-      <th>Template</th>
-      <th>$\textbf{a}$</th>
-      <th>$\textbf{b}$</th>
-      <th>Violated at Time</th>
-    </tr></thead>
-    <tbody>
-    <tr>
-      <td>Until</td>
-      <td><code>Tile.arb_io_dcache_r_ready</code></td>
-      <td><code>Tile.dcache.hit</code></td>
-      <td>418</td>
-    </tr>
-    <tr>
-      <td>Until</td>
-      <td><code>Tile.dcache_io_nasti_r_valid</code></td>
-      <td><code>Tile.dcache.hit</code></td>
-      <td>418<td>
-    </tr>
-    <tr>
-      <td>Until</td>
-      <td><code>Tile.dcache.is_alloc</code></td>
-      <td><code>Tile.dcache.hit</code></td>
-      <td>418</td>
-    </tr>
-    <tr>
-      <td>Until</td>
-      <td><code>Tile.arb.io_dcache_ar_ready</code></td>
-      <td><code>Tile.arb_io_nasti_r_ready</code></td>
-      <td>640</td>
-    </tr>
-    </tbody>
-  </table>
-
-  <p class="center fragment small">The violated properties point to an anomaly with the <code>hit</code> signal and localize the bug</p>
-</section>
-
-<section>
-  <h2 style="font-size:1.8rem;">6.b: Coverpoint Synthesis as Complement of Spec Mining</h2>
-
-  <ul>
-    <li class="fragment"><em>Specification mining</em> takes waveforms of an RTL design and synthesizes properties that are unfalsified on all traces</li>
-    <li class="fragment">Coverpoint synthesis is an alternative take on spec mining where we synthesize μArch properties that we want to see more of
-      <ul>
-        <li>Instead of monitoring properties for falsification, we monitor them for <em>completion</em></li>
-        <li>Properties that are <em>completed</em>, but not too often, are good candidates for coverpoints</li>
-      </ul>
-    </li>
-    <!--<li class="fragment">This technique is far more effective if we have <em>many unique, realistic traces</em>
-      <ul>
-        <li class="fragment">Leverage interval clustering and sampled RTL simulation</li>
-      </ul>
-    </li>
-    -->
-    <li class="fragment">Evaluation:
-      <ul>
-        <li>Synthesize coverpoints on Rocket using waveforms from TidalSim and regular RTL sim with the same compute budget</li>
-        <li>Demonstrate we can synthesize more, and more interesting coverpoints using TidalSim data</li>
-      </ul>
-    </li>
-  </ul>
-</section>
-
-<!-- <section>
-  <h2>Performance and Power Evaluation</h2>
-  <ul>
-    <li class="fragment">Trace extraction for power model construction
-    <ul>
-      <li>Currently power macromodels are built + trained only on workloads that can run in RTL simulation</li>
-      <li>TidalSim enables extraction of unique, short traces from full workloads</li>
-      <li>Potential to improve signal selection and uncover holes in training datasets</li>
-    </ul>
-    </li>
-  </ul>
-</section>
--->
-
-<!--
-<section>
-  <h2>Issues with HW Fuzzer Evaluations</h2>
-  <ul>
-    <li class="fragment"><em>Last time</em>: discussed deficiencies in existing HW fuzzing evaluations due to bad success/feedback metrics
-    <ul>
-      <li class="fragment">Structural coverage is too easy to hit</li>
-      <li class="fragment">Time to rediscover old bugs is too biased and forces us to use old RTL</li>
-    </ul>
-    </li>
-    <li class="fragment">Bad metrics ⮕ dubious conclusions
-    <ul>
-      <li>We should save &gt;50% of mutated stimuli (vs &lt;1% for SW fuzzers)</li>
-      <li>RTL-level feedback is useless for hitting bugs or improving coverage (vs SW fuzzers making no progress without feedback)</li>
-    </ul>
-    </li>
-  </ul>
-  <p class="center fragment">Can we synthesize metrics that lead to reasonable HW fuzzer evaluations?</p>
-</section>
--->
-
-<!--
-<section>
-  <h2>Coverpoint Synthesis</h2>
-  <ul>
-    <li class="fragment"><em>Specification mining</em> takes waveforms of an RTL design and synthesizes properties involving 2+ signals that are unfalsified on all traces</li>
-    <li class="fragment">Coverpoint synthesis is an alternative take on spec mining where we synthesize μArch properties that we want to see more of</li>
-    <li class="fragment">This technique is far more effective if we have <em>many unique, realistic traces</em>
-      <ul>
-        <li class="fragment">Leverage interval clustering and sampled RTL simulation</li>
-      </ul>
-    </li>
-  </ul>
-</section>
--->
-
-<!--
-<section>
-  <h2>Bootstrapping Fuzzing</h2>
-  <ul>
-    <li class="fragment">Most HW fuzzers start from reset and run a binary on the SoC to hit some objective</li>
-    <li class="fragment">Interesting objectives are harder to hit from reset vs from the middle of a workload
-    <ul><li>e.g. post-OS boot, in the middle of an application</li></ul>
-    </li>
-    <li class="fragment">Arch and μArch checkpoints from TidalSim guarantee reachability and provides starting points for HW fuzzers</li>
-  </ul>
-</section>
---></section>
-
 <section>
   <section class="center">
     <h2>7. Thesis Outline</h2>
