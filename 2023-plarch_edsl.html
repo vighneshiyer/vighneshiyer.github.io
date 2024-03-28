@@ -23,10 +23,10 @@
     column-gap: 1em;
   }
 </style>
-    <script type="module" crossorigin src="/assets/2023-plarch_edsl-1cc03810.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/reveal.esm-ef56d187.js">
-    <link rel="stylesheet" href="/assets/reveal-9088ee32.css">
-    <link rel="stylesheet" href="/assets/white-b644a343.css">
+    <script type="module" crossorigin src="/assets/2023-plarch_edsl-CZLY9Y5q.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/reveal.esm-B9mjqvxU.js">
+    <link rel="stylesheet" crossorigin href="/assets/reveal-BKmkijhR.css">
+    <link rel="stylesheet" crossorigin href="/assets/white-CnwRrglA.css">
   </head>
 
   <body vocab="http://schema.org/" typeof="PresentationDigitalDocument">
@@ -161,7 +161,7 @@ endclass
 
   <section>
     <h3>eDSL Construction</h3>
-    <img src="/assets/functional_apis-69439eb0.svg" />
+    <img src="/assets/functional_apis-bnvCFoUh.svg" />
     <ul>
       <li class="fragment">eDSLs provide ADTs and APIs</li>
       <li class="fragment">A regular program written in the host language is run to construct a <em>description</em></li>
@@ -235,7 +235,7 @@ test(new Queue(UInt(8.W), 4)) { c =>
     <h3>Interpreter / Scheduler</h3>
     <div class="container" style="grid-template-columns: 1fr 1fr;">
       <div class="col" style="display: grid;">
-        <img src="/assets/scheduler_sans_serif-c087ddac.svg" style="align-self:center;" />
+        <img src="/assets/scheduler_sans_serif-pQEvfUaR.svg" style="align-self:center;" />
       </div>
       <div class="col">
         <ul>
@@ -348,7 +348,7 @@ Gen[MemTx].generate(ParametricRandom(Seq[Byte](...)))
 </pre></code>
     <p class="center fragment">Unify both imperative and declarative constraint generators and introduce parametric control</p>
 
-    <img class="fragment" src="/assets/parametric_fuzzing_loop-b442d3a8.svg" />
+    <img class="fragment" src="/assets/parametric_fuzzing_loop-DuUbs-kn.svg" />
   </section>
 
   <section>
@@ -409,13 +409,13 @@ val readOnce = recipe(
     <h3>Leveraging Chisel and Scala for Debug</h3>
     <p class="center fragment">Use Scala macros to inject source line instrumentation into eDSL primitives</p>
     <p class="center fragment">Use Chisel printf and naming APIs to inject source info into RTL</p>
-    <img class="fragment" src="/assets/waveform_debugging-303b5b4f.png" />
+    <img class="fragment" src="/assets/waveform_debugging-T1nekoxZ.png" />
   </section>
 
   <section>
     <h3>Implementation</h3>
 
-    <img class="fragment" src="/assets/recipe_compilation-57d686db.svg" />
+    <img class="fragment" src="/assets/recipe_compilation-C0kE3ZMi.svg" />
 
     <p class="center fragment">Each primitive is a go-done circuit</p>
     <p class="center fragment">Opportunity to use a lightweight HLS IR (e.g. Calyx) to produce optimized FSMs</p>
@@ -463,6 +463,5 @@ summarize the table from the paper
         </div>
     </div>
 
-    
   </body>
 </html>
