@@ -72,8 +72,8 @@
     <a href="https://github.com/ucb-bar/chipyard">
       <img src="/assets/chipyard_logo-BOSErldK.svg" class="image" style="height: 100px;">
     </a>
-    <h2 class="fragment">The Next Paradigm of Hardware and SoC Design</h2>
-    <h3>Chisel / Chipyard Overview + Demo</h3>
+    <h2 class="fragment">The Next Paradigm of SoC Design</h2>
+    <h3>Chipyard Overview + Calyx Integration Demo</h3>
     <h4 style="font-weight:normal;">
       Joonho Whangbo, Vighnesh Iyer, Bora Nikolic (UC Berkeley)
     </h4>
@@ -171,21 +171,24 @@
 
   <section>
     <h2>Specification</h2>
-    <div class="center">
-      <p><em>Insert picture of random excel spreadsheets, AXI spec documents, DDR state machines</em></p>
+    <div class="center fragment">
+      <img class="image" src="/assets/specification-BICS7qvT.svg" />
+      <!--<p><em>Insert picture of random excel spreadsheets, AXI spec documents, DDR state machines</em></p>-->
     </div>
 
     <ul>
-      <li>English and Excel specs are the norm</li>
-      <li>Simulators, models, and verification collateral are handcrafted rather than generated</li>
-      <li>Translation errors due to undefined behaviors and misinterpretation are common</li>
+      <li class="fragment">English, Excel, and drawing specs are the norm</li>
+      <li class="fragment">Simulators, models, and verification collateral are handcrafted rather than generated</li>
+      <li class="fragment">Translation errors due to undefined behaviors and misinterpretation are common</li>
     </ul>
   </section>
 
   <section>
     <h2>Languages + Semantics</h2>
-    <div class="center">
-      <p><em>Insert picture of ugly SystemVerilog macros, Perl generators</em></p>
+    <div class="center fragment">
+      <img class="image no-margin" src="/assets/typical_flow-BtQ9ZOSW.svg" />
+      <!--<figcaption class="small">A pretty typical flow</figcaption>-->
+      <!--<p><em>Insert picture of ugly SystemVerilog macros, Perl generators</em></p>-->
     </div>
 
     <!--
@@ -194,28 +197,29 @@
     - massive monolithic simulation/emulation tools
     - macros on top of macros on top of web of Perl scripts
     -->
-    <ul>
-      <li>Most design is done at the RTL abstraction in Verilog/VHDL</li>
-      <li>Limitations of these languages lead to a tower of macros on top of macros on top of a web of Perl</li>
-      <li>Simulation / synthesis semantics mismatch</li>
-      <li>Compositional semantics of mixing multiple abstractions isn't defined. Everything is lowered to RTL</li>
-      <li>Simulation / emulation tools are massive monolithic blobs</li>
+    <ul class="small">
+      <li class="fragment">Most design is done at the RTL abstraction in Verilog/VHDL</li>
+      <li class="fragment">Limitations of these languages lead to a tower of macros on top of macros on top of a web of Perl</li>
+      <li class="fragment">Simulation / synthesis semantics mismatch</li>
+      <li class="fragment">Compositional semantics of mixing multiple abstractions isn't defined. Everything is lowered to RTL</li>
+      <li class="fragment">Simulation / emulation tools are massive monolithic blobs</li>
     </ul>
   </section>
 
   <section>
     <h2>SoC Integration / Construction</h2>
-    <div class="center">
-      <p><em>Image of Makefile calling other Makefiles and being wrapped in yet another custom build system</em></p>
+    <div class="center fragment">
+      <img class="image no-margin" src="/assets/soc_construction-Bi1PqW1b.svg" />
+      <!--<p><em>Image of Makefile calling other Makefiles and being wrapped in yet another custom build system</em></p>-->
     </div>
 
     <!--
     - web of scripts and build systems, config systems on top of config systems
     -->
     <ul>
-      <li>Composing IP correctly is hard. Satisfying global constraints, verifying the interface</li>
-      <li>SoC construction described in ad-hoc phases</li>
-      <li>Collateral emission must synchronize the state and configuration of every IP</li>
+      <li class="fragment">Composing IP correctly is hard. Satisfying global constraints, verifying every interface conforms, parameter propagation</li>
+      <li class="fragment">SoC construction described in ad-hoc phases with yaml on top of Makefiles on top of Makefiles</li>
+      <li class="fragment">Collateral emission at block and SoC level must understand the configuration of every IP</li>
     </ul>
   </section>
 
@@ -227,24 +231,25 @@
     -->
 
     <div class="center">
-      <p><em>Image of iteration speeds as they exist currently. few minutes from design change to elab (for Chipyard), 10s of minutes for HLS. time for RTL sim + eval. time for firesim fpga eval. time for PD flow for power/area.</em></p>
+      <img class="image no-margin" src="/assets/iteration_speeds-7Rz55Ouj.svg" />
+      <!--<p><em>Image of iteration speeds as they exist currently. few minutes from design change to elab (for Chipyard), 10s of minutes for HLS. time for RTL sim + eval. time for firesim fpga eval. time for PD flow for power/area.</em></p>-->
     </div>
 
     <ul>
-      <li>Each new layer of tools adds latency from making a change to evaluation</li>
-      <li>Current generation of tools has ad-hoc support for incremental compilation of the design and simulator</li>
-      <li>It's well known that low iteration speed hampers developer productivity</li>
+      <li class="fragment">Each new layer of tools adds latency from making a change to evaluation</li>
+      <li class="fragment">Current generation of tools has ad-hoc support for incremental compilation of the design and simulator</li>
+      <li class="fragment">It's well known that low iteration speed hampers developer productivity</li>
     </ul>
   </section>
 
-  <section>
+  <!--<section>
     <h2>Beauty / Elegance</h2>
 
     <ul>
       <li>Compare / contrast SystemC HLS vs Halide or EXO as an example</li>
       <li>How else can we demonstrate the lack of beauty?</li>
     </ul>
-  </section>
+  </section>-->
 </section>
 
 <section>
@@ -302,57 +307,74 @@
     </table>
 
     <ul>
-      <li>Agile, small, and generalist workforce</li>
-      <li>Teams are specialized by design block rather than function</li>
+      <li class="fragment">Agile, small, and generalist workforce</li>
+      <li class="fragment">Teams are specialized by design block rather than function</li>
       <!--<li>Teams collaborate across functions</li>-->
-      <li>Design and specification artifacts are reused and contain semantics that span from specification to PD</li>
-      <li>Higher level abstractions enable productivity across the stack</li>
+      <li class="fragment">Design and specification artifacts are reused and contain semantics that span from specification to PD</li>
+      <li class="fragment">Higher level abstractions enable productivity across the stack</li>
     </ul>
   </section>
 
   <section>
     <h2>Clean Interop of Multiple Abstractions</h2>
 
-    <div class="center">
-      <p>Image of the ESP overview (https://www.esp.cs.columbia.edu/).</p>
+    <div class="container" style="grid-template-columns: 1fr 1fr;">
+      <div class="fragment"><img src="/assets/esp_flow-BMZJ1GSX.png" /></div>
+      <div class="fragment">
+    <pre><code class="scala" data-trim data-line-numbers>
+class GCDMMIOBlackBox(val w: Int)
+  extends BlackBox(Map("WIDTH" -> IntParam(w)))
+  with HasBlackBoxResource
+  with HasGCDIO
+{
+  addResource("/vsrc/GCDMMIOBlackBox.v")
+}
+    </code></pre>
+      </div>
     </div>
 
     <ul>
-      <li>We are still far away from realizing true multi-abstraction interop
+      <li class="fragment">We are still far away from realizing true multi-abstraction interop
         <ul>
-        <li>Blackboxing isn't true interop</li>
-        <li>Designers can benefit from fine-grained interop</li>
+        <li class="fragment">Blackboxing isn't true interop</li>
+        <li class="fragment">Designers can benefit from fine-grained interop</li>
         </ul>
       </li>
     </ul>
     <dl>
-      <dt>Elaboration time interop</dt><dd>How a top-level generator invokes sub-generators</dd>
-      <dt>Runtime interop</dt><dd>Interaction semantics between abstractions</dd>
+      <dt class="fragment">Elaboration time interop</dt><dd class="fragment">The practical mechanism (FFI) of invoking sub-generators</dd>
+      <dt class="fragment">Runtime interop</dt><dd class="fragment">Runtime interaction semantics between abstractions</dd>
+    </dl>
   </section>
 
   <section>
-    <h2>Rapid Iteration on all Axes</h2>
+    <h2>Rapid Iteration Across the Design Flow</h2>
 
+    <div class="container image no-padding no-margin" style="grid-template-columns: 1fr 1fr;">
+      <div class="fragment"><img width="60%" src="/assets/livesynth-Df-lNKtt.png" /></div>
+      <div class="fragment"><img src="/assets/livehd-DLUmKpjR.png" /></div>
+      <!--<p><em>Modified image of iteration speeds. Make it clear that an fine-grained accuracy vs fidelity tradeoff is possible.</em></p>-->
+    </div>
     <div class="center">
-      <p><em>Modified image of iteration speeds. Make it clear that an fine-grained accuracy vs fidelity tradeoff is possible.</em></p>
+      <figcaption class="fragment small">LiveSynth and LiveHD make strong drive towards rapid iteration.</figcaption>
     </div>
 
     <ul>
-      <li>Focus not only on performance (throughput) of existing frontend + simulation tools, but also on <em>startup latency</em></li>
-      <li>It's a lot more than just the frontend language: PPA iteration cycle, verification, other stuff</li>
-      <li><em>Call out LiveHD, LiveSim, LiveSynth for being the only works that tackle this critical problem</em></li>
+      <li class="fragment">Focus not only on performance (throughput) of existing frontend + simulation tools, but also on <em>startup latency</em></li>
+      <li class="fragment">It's a lot more than just the frontend language: PPA evaluation, verification, and simulation is critical</li>
+      <!--<li><em>Call out LiveHD, LiveSim, LiveSynth for being the only works that tackle this critical problem</em></li>-->
     </ul>
   </section>
 
   <section>
     <h2>Main Ideas</h2>
     <dl>
-      <dt>Frontends</dt>
-      <dd>Mixed-abstraction, interop semantics, ergonomic external module integration, embedding PD/power/verification collateral, rewrite/spec/compiler generation</dd>
-      <dt>IRs</dt>
-      <dd>Preservation of semantics, graph-oriented representation</dd>
-      <dt>Tools / Simulators</dt>
-      <dd>Low latency iteration cycle (incremental), full spectrum (from specification to PD)</dd>
+      <dt class="fragment">Frontends</dt>
+      <dd class="fragment">Mixed-abstraction, interop semantics, ergonomic external module integration, embedding PD/power/verification collateral, rewrite/spec/compiler generation</dd>
+      <dt class="fragment">IRs</dt>
+      <dd class="fragment">Preservation of semantics, graph-oriented representation</dd>
+      <dt class="fragment">Tools / Simulators</dt>
+      <dd class="fragment">Low latency iteration cycle (incremental), full spectrum (from specification to PD)</dd>
     </dl>
   </section>
 </section>
@@ -400,6 +422,7 @@
     <ul class="fragment">
       <li><strong><a href="https://github.com/ucb-bar/chipyard">Chipyard</a></strong>: Chisel-based, cores (Rocket, BOOM, CVA6), accelerators (Gemmini, NVDLA), memory system + NoC</li>
       <li><a href="https://www.esp.cs.columbia.edu/">ESP</a>: Tile based SoC architecture, cores (CVA6, Ibex), accelerators (Verilog blackboxing), memory system + NoC</li>
+      <li><a href="http://parallel.princeton.edu/openpiton/">OpenPiton</a>: Ariane + memory / uncore components</li>
       <li><a href="https://github.com/pulp-platform/pulp">PULP</a>: Cores (RISCY, zero-riscy), ???</li>
       <li><a href="https://github.com/black-parrot/black-parrot">BlackParrot</a>: ???</li>
       <li><a href="https://github.com/OpenXiangShan/XiangShan">Xiangshan</a>: High performance OoO RISC-V core + L2</li>
@@ -408,6 +431,260 @@
     <p class="center fragment">Full system evaluation at RTL-level. SoC level parameterization and integration of external IP.</p>
   </section>
 </section>
+
+<section>
+  <section class="center">
+    <h2>The RTL First Design Methodology</h2>
+    <p>"Just go write RTL"</p>
+  </section>
+
+  <section class="center">
+    <h3>We need to reduce the NRE cost</h3>
+    <img src="/assets/nre-cost-DXo045Ni.jpg"/>
+  </section>
+
+  <section class="center">
+    <h3>Typical hardware design cycle</h3>
+    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
+      <div class="fragment">
+        <img src="/assets/design-process-DwmRtuPs.svg" />
+      </div>
+      <div>
+        <font size="6">
+        <ul>
+          <li class="fragment">Iterate over a design point in various abstractions.</li>
+          <li class="fragment">You can get feedback from lower level abstractions.</li>
+          <li class="fragment">You are likely to run <strong>a lot of simulations</strong> in order to get functionality and performance correct.</li>
+        </ul>
+        </font>
+      </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <h3>Time and effort is wasted</h3>
+    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
+      <div class="fragment">
+        <img src="/assets/compiling-DMTouufm.png" />
+      </div>
+      <div>
+        <font size="6">
+        <ul>
+          <li class="fragment">People just sit there waiting for code to compile or simulations to run.</li>
+          <li class="fragment">Large companies can afford to have separate teams for each step of the design process.</li>
+          <li class="fragment">Unsuitable for academics or startups with small teams.</li>
+        </ul>
+        </font>
+      </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <h3>RTL first design methodology</h3>
+    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
+      <div class="fragment">
+        <img src="/assets/design-process-rtl-first-DTxOuF03.svg" />
+      </div>
+      <div>
+        <font size="6">
+        <ul>
+          <li class="fragment">Modeling is required because <strong>RTL writing is hard</strong>.</li>
+          <li class="fragment">Modeling has a lot of errors and can lead designers to wrong conclusions.</li>
+          <li class="fragment">Redundant work is done by writing code twice for the same design.</li>
+          <li class="fragment">Make RTL writing so easy that we can just do modeling with RTL!</li>
+        </ul>
+        </font>
+      </div>
+    </div>
+  </section>
+
+  <section class="center">
+    <h3>Our efforts towards RTL first</h3>
+    <ul>
+      <li class="fragment">Design language : Chisel & FIRRTL</li>
+      <li class="fragment">SoC evaluation framework : Chipyard & FireSim</li>
+    </ul>
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h2>Introduction to Chisel & FIRRTL</h2>
+  </section>
+
+  <section class="center">
+    <h2>Chisel</h2>
+    <ul>
+      <li class="fragment">HDL embedded in Scala.</li>
+      <li class="fragment">Metaprogramming on top of the RTL abstraction.</li>
+      <ul>
+        <li class="fragment">Scala enables high expressiveness compared to SV.</li>
+        <li class="fragment">Makes it much easier to read and write RTL.</li>
+      </ul>
+    </ul>
+  </section>
+
+  <section data-auto-animate>
+    <h3>Reduced Sum : System Verilog</h3>
+    <pre data-id="code-animation"><code class="verilog" data-trim data-line-numbers>
+    module MyModule
+      #(parameter N, M)
+      (
+        input  [N-1:0] a [0:M-1],
+        output [N-1:0] sum
+      );
+      ...
+
+    endmodule
+    </code></pre>
+  </section>
+
+  <section data-auto-animate>
+    <h3>Reduced Sum : System Verilog</h3>
+    <pre data-id="code-animation"><code class="verilog" data-trim data-line-numbers="8-18">
+    module MyModule
+      #(parameter N, M)
+      (
+        input  [N-1:0] a [0:M-1],
+        output [N-1:0] sum
+      );
+
+      reg [N-1:0] tmp [0:M];
+
+      tmp[0] = a[0];
+      sum = tmp[M];
+
+      genvar i;
+      generate
+        for (i = 1; i &lt; M; i = i + 1) begin
+          tmp[i] = tmp[i-1] + a[i];
+        end
+      endgenerate
+    endmodule
+    </code></pre>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Reduced Sum : Chisel</h2>
+    <pre data-id="code-animation"><code class="scala" data-trim data-line-numbers>
+    class MyModule(N: Int, M: Int) extends Module {
+      val io = IO(new Bundle {
+        val a = Vec(M, Input(UInt(N.W)))
+        val sum  = Output(UInt(N.W))
+      })
+      ...
+    }
+    </code></pre>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Reduced Sum : Chisel</h2>
+    <pre data-id="code-animation"><code class="scala" data-trim data-line-numbers="6">
+    class MyModule(N: Int, M: Int) extends Module {
+      val io = IO(new Bundle {
+        val a = Vec(M, Input(UInt(N.W)))
+        val sum  = Output(UInt(N.W))
+      })
+      io.sum := io.a.reduce(_ + _)
+    }
+    </code></pre>
+  </section>
+
+  <section class="center">
+    <h2>Chisel as a embedded DSL</h2>
+    <ul>
+      <li class="fragment">Enables us to use existing tools around the host language.</li>
+      <ul>
+        <li class="fragment">Package manager.</li>
+        <li class="fragment">Build systems.</li>
+        <li class="fragment">LSP.</li>
+      </ul>
+    </ul>
+  </section>
+
+  <section class="center">
+    <h2>FIRRTL</h2>
+    <ul>
+      <li class="fragment">Intermediate representation for Chisel.</li>
+      <li class="fragment">Designed to represent the generated circuit after Chisel's elaboration (after all meta programming has executed).</li>
+      <li class="fragment">Enables you to programmatically analyse and modify the circuit.</li>
+      <li class="fragment">SSA style in memory representation.</li>
+    </ul>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Reduced Sum : FIRRTL</h2>
+    <pre data-id="code-animation"><code class="" data-trim data-line-numbers>
+    circuit MyModule :
+      module MyModule :
+        ...
+    </code></pre>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Reduced Sum : FIRRTL</h2>
+    <pre data-id="code-animation"><code class="" data-trim data-line-numbers="2-5">
+    circuit MyModule :
+      module MyModule :
+        input clock : Clock
+        input reset : UInt&lbrack;1&rbrack;
+        output io : { flip a : UInt&lbrack;4&rbrack;[4], sum : UInt&lbrack;4&rbrack;}
+
+        node _io_sum_T = add(io.a[0], io.a[1]) @[MyModule.scala 14:27]
+        node _io_sum_T_1 = tail(_io_sum_T, 1) @[MyModule.scala 14:27]
+        node _io_sum_T_2 = add(_io_sum_T_1, io.a[2]) @[MyModule.scala 14:27]
+        node _io_sum_T_3 = tail(_io_sum_T_2, 1) @[MyModule.scala 14:27]
+        node _io_sum_T_4 = add(_io_sum_T_3, io.a[3]) @[MyModule.scala 14:27]
+        node _io_sum_T_5 = tail(_io_sum_T_4, 1) @[MyModule.scala 14:27]
+        io.sum &lt;= _io_sum_T_5 @[MyModule.scala 14:10]
+    </code></pre>
+    <p>FIRRTL resembles your circuit.</p>
+  </section>
+
+  <section data-auto-animate>
+    <h2>Reduced Sum : FIRRTL</h2>
+    <pre data-id="code-animation"><code class="" data-trim data-line-numbers="7-13">
+    circuit MyModule :
+      module MyModule :
+        input clock : Clock
+        input reset : UInt&lbrack;1&rbrack;
+        output io : { flip a : UInt&lbrack;4&rbrack;[4], sum : UInt&lbrack;4&rbrack;}
+
+        node _io_sum_T = add(io.a[0], io.a[1]) @[MyModule.scala 14:27]
+        node _io_sum_T_1 = tail(_io_sum_T, 1) @[MyModule.scala 14:27]
+        node _io_sum_T_2 = add(_io_sum_T_1, io.a[2]) @[MyModule.scala 14:27]
+        node _io_sum_T_3 = tail(_io_sum_T_2, 1) @[MyModule.scala 14:27]
+        node _io_sum_T_4 = add(_io_sum_T_3, io.a[3]) @[MyModule.scala 14:27]
+        node _io_sum_T_5 = tail(_io_sum_T_4, 1) @[MyModule.scala 14:27]
+        io.sum &lt;= _io_sum_T_5 @[MyModule.scala 14:10]
+    </code></pre>
+    <p>Metaprogramming has executed</p>
+  </section>
+
+  <section data-auto-animate>
+    <h3>Cool things that FIRRTL enables</h3>
+    <ul>
+      <li class="fragment">FAME transformations and FireSim.</li>
+      <figure>
+        <img class="fragment" src="/assets/li-bdn-transformed-DwJCM3n-.svg" />
+        <figcaption class="fragment">Bold lines : Target design<br>Dashed lines : Timing control logic</figcaption>
+      </figure>
+    </ul>
+  </section>
+
+  <section data-auto-animate>
+    <h3>Cool things that FIRRTL enables</h3>
+    <ul>
+      <li class="fragment">Scan-chains.</li>
+      <li class="fragment">Error checking, generic compiler optimizations.</li>
+      <ul>
+        <li class="fragment">Combinational loop detection.</li>
+        <li class="fragment">DCE, CSE, Const Prop.</li>
+      </ul>
+    </ul>
+  </section>
+</section>
+
 
 <section>
   <section class="center">
@@ -627,6 +904,25 @@
       </div>
     </div>
   </section>
+
+  <section class="center">
+    <h3>Overview of the Current Infrastructure</h3>
+    <div class="container" style="grid-template-columns: 1.0fr 1.0fr;">
+      <div class="fragment">
+        <img src="/assets/tool-stack-hudsUx8J.svg" />
+      </div>
+      <div>
+        <font size="6">
+        <ul>
+          <li class="fragment">Chisel & FIRRTL : Expressive frontend and flexible IR.</li>
+          <li class="fragment">Chipyard : Composable SoC generator framework w/ a handful of grad students.</li>
+          <li class="fragment">FireSim : Fast RTL simulation.</li>
+          <li class="fragment">Enabled countless research projects from both industry and academia for the last 5+ years.</li>
+        </ul>
+        </font>
+      </div>
+    </div>
+  </section>
 </section>
 
 
@@ -641,6 +937,10 @@
 <!-- - Then, we can explain about the two possible approaches. -->
 <!-- - short-term approach : Graal VM + have a way of interchanging SoC level parameters (Diplomacy+++) -->
 <!-- - long-term superior approach : unified frontend (we should also mention that the frontend should be extensible such that it doesn't limit further improvements in DSLs) -->
+  <section class="center">
+    <h2>Demo : Integrating External IP!</h2>
+  </section>
+
   <section class="center">
     <h2>Demo : Integrating External IP!</h2>
     <ul>
@@ -984,277 +1284,40 @@
 
 <!-- -------------------------------------------------------------------- -->
 
+
 <section>
   <section class="center">
-    <h2>The RTL First Design Methodology</h2>
-    <p>"Just go write RTL"</p>
+    <h2>Why have we not reached the next paradigm?</h2>
   </section>
 
   <section class="center">
-    <h3>We need to reduce the NRE cost</h3>
-    <img src="/assets/nre-cost-DXo045Ni.jpg"/>
-  </section>
-
-  <section class="center">
-    <h3>Typical hardware design cycle</h3>
-    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
-      <div class="fragment">
-        <img src="/assets/design-process-DwmRtuPs.svg" />
-      </div>
-      <div>
-        <font size="6">
-        <ul>
-          <li class="fragment">Iterate over a design point in various abstractions.</li>
-          <li class="fragment">You can get feedback from lower level abstractions.</li>
-          <li class="fragment">You are likely to run <strong>a lot of simulations</strong> in order to get functionality and performance correct.</li>
-        </ul>
-        </font>
-      </div>
-    </div>
-  </section>
-
-  <section class="center">
-    <h3>Time and effort is wasted</h3>
-    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
-      <div class="fragment">
-        <img src="/assets/compiling-DMTouufm.png" />
-      </div>
-      <div>
-        <font size="6">
-        <ul>
-          <li class="fragment">People just sit there waiting for code to compile or simulations to run.</li>
-          <li class="fragment">Large companies can afford to have separate teams for each step of the design process.</li>
-          <li class="fragment">Unsuitable for academics or startups with small teams.</li>
-        </ul>
-        </font>
-      </div>
-    </div>
-  </section>
-
-  <section class="center">
-    <h3>RTL first design methodology</h3>
-    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
-      <div class="fragment">
-        <img src="/assets/design-process-rtl-first-DTxOuF03.svg" />
-      </div>
-      <div>
-        <font size="6">
-        <ul>
-          <li class="fragment">Modeling is required because <strong>RTL writing is hard</strong>.</li>
-          <li class="fragment">Modeling has a lot of errors and can lead designers to wrong conclusions.</li>
-          <li class="fragment">Redundant work is done by writing code twice for the same design.</li>
-          <li class="fragment">Make RTL writing so easy that we can just do modeling with RTL!</li>
-        </ul>
-        </font>
-      </div>
-    </div>
-  </section>
-
-  <section class="center">
-    <h2>Chisel</h2>
+    <h3>Why have we not reached the next paradigm?</h3>
     <ul>
-      <li class="fragment">HDL embedded in Scala.</li>
-      <li class="fragment">Metaprogramming on top of the RTL abstraction.</li>
+      <li class="fragment">Iteration cycle.</li>
       <ul>
-        <li class="fragment">Scala enables high expressiveness compared to SV.</li>
-        <li class="fragment">Makes it much easier to read and write RTL.</li>
+        <li class="fragment">Compile/simulation time.</li>
+        <li class="fragment">Fast power/area estimation capabilities.</li>
       </ul>
-    </ul>
-  </section>
-
-  <section data-auto-animate>
-    <h3>Reduced Sum : System Verilog</h3>
-    <pre data-id="code-animation"><code class="verilog" data-trim data-line-numbers>
-    module MyModule
-      #(parameter N, M)
-      (
-        input  [N-1:0] a [0:M-1],
-        output [N-1:0] sum
-      );
-      ...
-
-    endmodule
-    </code></pre>
-  </section>
-
-  <section data-auto-animate>
-    <h3>Reduced Sum : System Verilog</h3>
-    <pre data-id="code-animation"><code class="verilog" data-trim data-line-numbers="8-18">
-    module MyModule
-      #(parameter N, M)
-      (
-        input  [N-1:0] a [0:M-1],
-        output [N-1:0] sum
-      );
-
-      reg [N-1:0] tmp [0:M];
-
-      tmp[0] = a[0];
-      sum = tmp[M];
-
-      genvar i;
-      generate
-        for (i = 1; i &lt; M; i = i + 1) begin
-          tmp[i] = tmp[i-1] + a[i];
-        end
-      endgenerate
-    endmodule
-    </code></pre>
-  </section>
-
-  <section data-auto-animate>
-    <h2>Reduced Sum : Chisel</h2>
-    <pre data-id="code-animation"><code class="scala" data-trim data-line-numbers>
-    class MyModule(N: Int, M: Int) extends Module {
-      val io = IO(new Bundle {
-        val a = Vec(M, Input(UInt(N.W)))
-        val sum  = Output(UInt(N.W))
-      })
-      ...
-    }
-    </code></pre>
-  </section>
-
-  <section data-auto-animate>
-    <h2>Reduced Sum : Chisel</h2>
-    <pre data-id="code-animation"><code class="scala" data-trim data-line-numbers="6">
-    class MyModule(N: Int, M: Int) extends Module {
-      val io = IO(new Bundle {
-        val a = Vec(M, Input(UInt(N.W)))
-        val sum  = Output(UInt(N.W))
-      })
-      io.sum := io.a.reduce(_ + _)
-    }
-    </code></pre>
-  </section>
-
-  <section class="center">
-    <h2>Chisel as a embedded DSL</h2>
-    <ul>
-      <li class="fragment">Enables us to use existing tools around the host language.</li>
+      <li class="fragment">Utilizing the suitable abstractions.</li>
       <ul>
-        <li class="fragment">Package manager.</li>
-        <li class="fragment">Build systems.</li>
-        <li class="fragment">LSP.</li>
+        <li class="fragment">Design productivity.</li>
+        <li class="fragment">IP integration is always at the RTL level.</li>
+        <ul>
+          <li class="fragment">Ad-hoc blackboxing or DPI interfaces.</li>
+          <li class="fragment">Compromising simulation throughput.</li>
+        </ul>
+      </ul>
+      <li class="fragment">Other concerns.</li>
+      <ul>
+        <li class="fragment">Physical design, verification.</li>
+        <li class="fragment">Missing power/clock/reset semantics.</li>
+        <li class="fragment">Need a systematic way of generating collateral from specs.</li>
       </ul>
     </ul>
   </section>
 
   <section class="center">
-    <h2>FIRRTL</h2>
-    <ul>
-      <li class="fragment">Intermediate representation for Chisel.</li>
-      <li class="fragment">Designed to represent the generated circuit after Chisel's elaboration (after all meta programming has executed).</li>
-      <li class="fragment">Enables you to programmatically analyse and modify the circuit.</li>
-      <li class="fragment">SSA style in memory representation.</li>
-    </ul>
-  </section>
-
-  <section data-auto-animate>
-    <h2>Reduced Sum : FIRRTL</h2>
-    <pre data-id="code-animation"><code class="" data-trim data-line-numbers>
-    circuit MyModule :
-      module MyModule :
-        ...
-    </code></pre>
-  </section>
-
-  <section data-auto-animate>
-    <h2>Reduced Sum : FIRRTL</h2>
-    <pre data-id="code-animation"><code class="" data-trim data-line-numbers="2-5">
-    circuit MyModule :
-      module MyModule :
-        input clock : Clock
-        input reset : UInt&lbrack;1&rbrack;
-        output io : { flip a : UInt&lbrack;4&rbrack;[4], sum : UInt&lbrack;4&rbrack;}
-
-        node _io_sum_T = add(io.a[0], io.a[1]) @[MyModule.scala 14:27]
-        node _io_sum_T_1 = tail(_io_sum_T, 1) @[MyModule.scala 14:27]
-        node _io_sum_T_2 = add(_io_sum_T_1, io.a[2]) @[MyModule.scala 14:27]
-        node _io_sum_T_3 = tail(_io_sum_T_2, 1) @[MyModule.scala 14:27]
-        node _io_sum_T_4 = add(_io_sum_T_3, io.a[3]) @[MyModule.scala 14:27]
-        node _io_sum_T_5 = tail(_io_sum_T_4, 1) @[MyModule.scala 14:27]
-        io.sum &lt;= _io_sum_T_5 @[MyModule.scala 14:10]
-    </code></pre>
-    <p>FIRRTL resembles your circuit.</p>
-  </section>
-
-  <section data-auto-animate>
-    <h2>Reduced Sum : FIRRTL</h2>
-    <pre data-id="code-animation"><code class="" data-trim data-line-numbers="7-13">
-    circuit MyModule :
-      module MyModule :
-        input clock : Clock
-        input reset : UInt&lbrack;1&rbrack;
-        output io : { flip a : UInt&lbrack;4&rbrack;[4], sum : UInt&lbrack;4&rbrack;}
-
-        node _io_sum_T = add(io.a[0], io.a[1]) @[MyModule.scala 14:27]
-        node _io_sum_T_1 = tail(_io_sum_T, 1) @[MyModule.scala 14:27]
-        node _io_sum_T_2 = add(_io_sum_T_1, io.a[2]) @[MyModule.scala 14:27]
-        node _io_sum_T_3 = tail(_io_sum_T_2, 1) @[MyModule.scala 14:27]
-        node _io_sum_T_4 = add(_io_sum_T_3, io.a[3]) @[MyModule.scala 14:27]
-        node _io_sum_T_5 = tail(_io_sum_T_4, 1) @[MyModule.scala 14:27]
-        io.sum &lt;= _io_sum_T_5 @[MyModule.scala 14:10]
-    </code></pre>
-    <p>Metaprogramming has executed</p>
-  </section>
-
-  <section data-auto-animate>
-    <h3>Cool things that FIRRTL enables</h3>
-    <ul>
-      <li class="fragment">FAME transformations and FireSim.</li>
-      <figure>
-        <img class="fragment" src="/assets/li-bdn-transformed-DwJCM3n-.svg" />
-        <figcaption class="fragment">Bold lines : Target design<br>Dashed lines : Timing control logic</figcaption>
-      </figure>
-    </ul>
-  </section>
-
-  <section data-auto-animate>
-    <h3>Cool things that FIRRTL enables</h3>
-    <ul>
-      <li class="fragment">Scan-chains.</li>
-      <li class="fragment">Error checking, generic compiler optimizations.</li>
-      <ul>
-        <li class="fragment">Combinational loop detection.</li>
-        <li class="fragment">DCE, CSE, Const Prop.</li>
-      </ul>
-    </ul>
-  </section>
-
-  <section class="center">
-    <h3>Overview of the Current Infrastructure</h3>
-    <div class="container" style="grid-template-columns: 1.0fr 1.0fr;">
-      <div class="fragment">
-        <img src="/assets/tool-stack-hudsUx8J.svg" />
-      </div>
-      <div>
-        <font size="6">
-        <ul>
-          <li class="fragment">Chisel & FIRRTL : Expressive frontend and flexible IR.</li>
-          <li class="fragment">Chipyard : Composable SoC generator framework w/ a handful of grad students.</li>
-          <li class="fragment">FireSim : Fast RTL simulation.</li>
-          <li class="fragment">Enabled countless research projects from both industry and academia for the last 5+ years.</li>
-        </ul>
-        </font>
-      </div>
-    </div>
-  </section>
-
-  <section class="center">
-    <h2>Retrospective</h2>
-    <ul>
-      <li class="fragment">Have we realized the RTL first methodology to its full potential?</li>
-      <ul>
-        <li class="fragment">Compile time.</li>
-        <li class="fragment">Simulation time.</li>
-        <li class="fragment">Modeling time.</li>
-      </ul>
-    </ul>
-  </section>
-
-  <section class="center">
-    <h2>Retrospective : Compile Time</h2>
+    <h2>CY/FireSim retrospective : Compile Time</h2>
     <font size="6">
     <ul>
       <li class="fragment">Compile time of our designs is longer than SystemVerilog based frameworks.</li>
@@ -1267,7 +1330,7 @@
   </section>
 
   <section class="center">
-    <h3>Retrospective : Simulation Time</h3>
+    <h3>CY/FireSim retrospective : Simulation Time</h3>
     <ul>
       <li class="fragment">FireSim drastically reduced the simulation "runtime".</li>
       <li class="fragment">However, it takes hours to just compile FireSim bitstreams, making it unsuitable for meaningful DSE and debugging.</li>
@@ -1276,7 +1339,7 @@
   </section>
 
   <section class="center">
-    <h3>Retrospective : Modeling Time</h3>
+    <h3>CY/FireSim retrospective : Modeling Time</h3>
     <ul>
       <li class="fragment">We are still stuck at the RTL level abstraction.</li>
       <li class="fragment">Need a way of raising the level of abstraction in the initial phase of your design.</li>
@@ -1311,7 +1374,16 @@
 
   <section class="center">
     <h3>Rest of the talk</h3>
-    <img src="/assets/what-we-want-Dk76Ys4U.svg" />
+    <div class="container" style="grid-template-columns: 1.0fr 1.4fr;">
+    <div>
+      <img src="/assets/tool-stack-hudsUx8J.svg" />
+    </div>
+    <div>
+      <ul>
+        <li class="fragment">Our vision for rethinking the end-to-end flow for chip design.</li>
+      </ul>
+    </div>
+    </div>
   </section>
 </section>
 
@@ -1626,7 +1698,7 @@
     <ul>
       <li class="fragment">We all love static types.</li>
       <li class="fragment">However, we shouldn't be obsessed by it.</li>
-      <li class="fragment">Rule of thumb : should not hurt design productivity.</li>
+      <li class="fragment">Here, we are specifically talking about the types checked in the host language.</li>
       <li class="fragment">Things that it should do?</li>
       <ul>
         <li class="fragment">Check connection validity between signals.</li>
@@ -1634,12 +1706,15 @@
           <li class="fragment">E.g., you don't want to connect a clock signal into a reset port.</li>
         </ul>
         <li class="fragment">(For a eDSL), differentiate types between the DSL and host language.</li>
+        <li class="fragment">Pass physical encodings to the backing compiler and IR.</li>
+        <ul>
+          <li class="fragment">UInt (unsigned integer) vs OneHot (array of wires).</li>
+        </ul>
       </ul>
       <li class="fragment">Things that it shouldn't do?</li>
       <ul>
         <li class="fragment">Shouldn't make the language too verbose.</li>
         <li class="fragment">Shouldn't increase the compilation time significantly.</li>
-        <li class="fragment">Shouldn't try to prove circuit properties that should be checked during runtime.</li>
       </ul>
     </ul>
   </section>
@@ -1656,6 +1731,9 @@
     <h2>Incremental First</h2>
     <ul>
       <li class="fragment">As mentioned in the previous section, it is crucial to support <strong>incremental compilation and caching</strong>.</li>
+      <ul>
+        <li class="fragment">Crucial for quick iteraion and early PPA estimation.</li>
+      </ul>
       <li class="fragment">Arguably the most important feature to hardware designers.</li>
       <li class="fragment">If we take the embedded DSL approach, we don't have to redo this ourselves!</li>
       <li class="fragment">E.g., Rust already has 3rd party build cache tools (sccache).</li>
@@ -1822,7 +1900,7 @@
 
   <section class="center">
     <h4>Possible Primitives</h4>
-    <pre data-id="code-animation"><code class="scala" data-trim data-line-numbers="9-12">
+    <pre data-id="code-animation"><code class="scala" data-trim data-line-numbers="9-14">
     case class Mux(...)
     case class UIntLiteral(...)
     case class SIntLiteral(...)
@@ -1831,6 +1909,8 @@
     case class DefInstance(...)
     case class DefMemory(...)
     abstract class PrimOp extends FirrtlNode
+    case class Clock(...)
+    case class Reset(...)
     case class OH(...)
     case class PriorityMux(...)
     case class BoolLiteral(...)
