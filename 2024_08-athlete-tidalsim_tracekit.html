@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>TidalSim and TraceKit</title>
+    <meta name="description" content="">
+    <meta name="author" content="Vighnesh Iyer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script type="module" crossorigin src="/assets/2024_08-athlete-tidalsim_tracekit-BPqsjWil.js"></script>
+        <link rel="modulepreload" crossorigin href="/assets/reveal.esm-FLSLtKfW.js">
+        <link rel="stylesheet" crossorigin href="/assets/reveal-BCbOiT2X.css">
+        <link rel="stylesheet" crossorigin href="/assets/tokyonight-light-CeXeHkff.css">
+        <link rel="stylesheet" crossorigin href="/assets/tokyo-night-dark-D_WlnMIb.css">
+      </head>
+
+  <body vocab="http://schema.org/" typeof="PresentationDigitalDocument">
+    <span property="publisher" style="display: none;">ATHLETE Update</span>
+    <time pubdate property="datePublished" datetime="2024-08-12" style="display: none;">August 12, 2024</time>
+    <div class="reveal">
+        <div class="slides">
+            <section class="center">
+  <h1>TidalSim and TraceKit</h1>
+  <h2 style="font-weight: normal;">Explorations of Execution-Driven and Trace-Based Sampled Simulation</h2>
+  <h5 style="font-weight: normal;"><strong>Vighnesh Iyer</strong>, Bora Nikolic</h5>
+
+  <h4>ATHLETE Update<br />
+  Monday, August 19th, 2024</h4>
+</section>
+
+<section>
+  <section class="center">
+    <h1>TidalSim Recap</h1>
+    <ul>
+      <li class="fragment">Sampled simulation <strong>using RTL simulation</strong>
+        <ul>
+          <li>Short sampling units with functional uArch warmup (a la SMARTs)</li>
+          <li>Representative sampling (a la Simpoints)</li>
+        </ul>
+      </li>
+      <li class="fragment">Custom uArch <strong>(RTL) state injection</strong>
+        <ul>
+          <li>L1 i/d cache functional warmup model to RTL state injection</li>
+          <li>Can extend to any long-lived functional unit</li>
+        </ul>
+      </li>
+      <li class="fragment">Enables <strong>high throughput and accurate</strong> simulation of long workloads
+        <ul>
+          <li>Avoid FPGA iteration latency when doing uArch exploration</li>
+          <li>Enables direct iteration on the RTL (not a model)</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Why RTL-Level Sampled Simulation?</h2>
+    <div class="container" style="grid-template-columns: 1.4fr 1fr;">
+      <div class="fragment">
+        <img class="image" src="/assets/why_rtl-CcG-9V1p.svg" />
+      </div>
+      <div>
+        <ul class="smallish">
+          <li class="fragment">In any sampled simulation flow we see time modeling, sampling, and warmup errors</li>
+          <li class="fragment">Direct use of RTL <strong>avoids modeling errors</strong> from uArch models
+            <ul>
+              <li class="fragment">No need to correlate performance model and RTL</li>
+              <li class="fragment">Let the RTL serve as the source of truth</li>
+            </ul>
+          </li>
+          <li class="fragment">Produce RTL-level collateral
+            <ul>
+              <li>Leverage for applications in verification and power modeling</li>
+            </ul>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sampled Simulation Overview</h2>
+
+    <p class="center fragment">Don't run the full workload in detailed simulation</p>
+    <p class="center fragment smallish">Run the workload in <em>ISA simulation</em> and pick <em>samples</em> to run in uArch simulation</p>
+
+    <div class="fragment center">
+      <img class="image no-margin" width="60%" src="/assets/sampled_simulation0-By_c7kgf.png" />
+    </div>
+
+    <p class="fragment center">The full workload is represented by a selection of <em>sampling units</em>.</p>
+
+    <ol class="smallish">
+      <li class="fragment"><strong>Sampling unit length</strong>: tradeoff runtime and resolution</li>
+      <li class="fragment"><strong>Warmup models</strong>: which uArch units to initialize</li>
+      <li class="fragment"><strong>Clustering and extrapolation</strong>: how sampling units should be selected and used for prediction</li>
+      <!--How can we estimate errors when extrapolating from sampling units?</li>--> <!-- error bounding via CLT or other heuristics -->
+    </ol>
+  </section>
+
+  <section data-visibility="hidden">
+    <h2>Functional Warmup</h2>
+
+    <p class="fragment center">The state from a sampling unit checkpoint is only <em>architectural</em> state. The <em>microarchitectural</em> state of the uArch simulator starts at the reset state!</p>
+
+    <div class="fragment center">
+      <img width="50%" class="image" src="/assets/sampled_simulation-B0qwL7gJ.png" />
+    </div>
+
+    <ul>
+      <li class="fragment">We need to seed long-lived uArch state at the beginning of each sampling unit</li>
+      <li class="fragment">This process is called <em>functional warmup</em></li>
+    </ul>
+  </section>
+
+  <section style="text-align: center;">
+    <h2>Overview of the TidalSim Flow</h2>
+    <img class="image" src="/assets/overview-_bAKuIOR.svg" />
+  </section>
+
+  <section>
+    <h2>Functional Warmup Flow</h2>
+    <div class="center">
+      <img class="image no-margin" src="/assets/full_flow_detail-BLF8TLPD.svg" />
+    </div>
+
+    <ol>
+      <li class="fragment">Full run of the binary on spike + sampling unit embedding + clustering</li>
+      <li class="fragment">Re-run spike to capture arch checkpoints at the start of sampling units</li>
+      <li class="fragment">Reconstruct L1d cache state for each arch checkpoint</li>
+      <li class="fragment">Inject sampling units into RTL sim and extrapolate</li>
+    </ol>
+
+    <!--<ul class="small">
+      <li class="fragment">uarch-agnostic cache checkpoints as memory timestamp record (MTR) checkpoints</li>
+      <li class="fragment">MTR checkpoints <strong>→</strong> cache state with cache parameters and DRAM contents</li>
+      <li class="fragment">RTL simulation harness injects cache state into L1d tag+data arrays via 2d reg forcing</li>
+    </ul>-->
+  </section>
+
+  <section>
+    <h2>IPC Trace Reconstruction - wikisort</h2>
+
+    <p class="center smallish">wikisort benchmark from embench, $N = 10000$, $C = 18$, $n_{\text{detailed}} = 2000$</p>
+
+    <div class="fragment center">
+      <img class="image no-margin" src="/assets/wikisort-CSB10uxr.svg" />
+      <figcaption class="fragment">$MAPE_{IPC} = 12.3\% \rightarrow 4.5\%$</figcaption>
+    </div>
+  </section>
+
+  <section>
+    <h2>IPC Trace Reconstruction - huffbench</h2>
+
+    <p class="center smallish">huffbench benchmark from embench, $N = 10000$, $C = 18$, $n_{\text{detailed}} = 2000$</p>
+
+    <div class="fragment center">
+      <img class="image no-margin" src="/assets/huffbench-DdKOzD6d.svg" />
+      <figcaption class="fragment">L1d functional warmup prevents gross IPC underprediction in most cases. $MAPE_{IPC} = 6.6\% \rightarrow 4.1\%$</figcaption>
+    </div>
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h1>Multithreaded Workload Sampling</h1>
+  </section>
+
+  <section>
+    <h2>Multithreaded Workloads</h2>
+
+    <ul>
+      <li class="fragment">HPC (NAS, ScaLAPACK, MPI (Intel/SPEC), Eigen, Cinebench, zstd)
+        <ul>
+          <li class="fragment">Compute/memory BW heavy</li>
+          <li class="fragment">Frequent inter-thread communication</li>
+          <li class="fragment">Native use of OS threads</li>
+          <li class="fragment">Insensitive to OS scheduling, stable thread contexts</li>
+        </ul>
+      </li>
+      <li class="fragment"><strong>Datacenter</strong> (nginx, Postgres, Redis, Gitlab)
+        <ul>
+          <li class="fragment">IO heavy</li>
+          <li class="fragment">Task-level parallelism, low ILP, inter-thread communication on task init/finish</li>
+          <li class="fragment">OS threads used for blocking IO (network, disk, database, RPC)</li>
+          <li class="fragment">High concurrency, userspace threading (green threads), frequent context switches</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p class="fragment center">Accurate modeling of time is essential for datacenter workloads</p>
+  </section>
+
+  <section>
+    <h2>Modeling Time in Sampled Simulation</h2>
+
+    <div class="center fragment">
+      <img width="80%" src="/assets/timer_interrupts-BAxG238I.svg" />
+    </div>
+
+    <!--<p class="center fragment">Consider timer interrupts: naive functional simulators will just advance one timestep per commited instruction, not matching RTL!</p>-->
+    <p class="center fragment">Live sampling (interleaving arch and uArch sim) is required to accurately model time-dependent behaviors.</p>
+  </section>
+
+  <section>
+    <h2>Prior Work in Multithreaded Sampling</h2>
+
+    <!--<ul>
+      <li class="fragment">Prior work runs uArch simulators in "syscall emulation" mode when evaluating workloads (e.g. SPEC), not modeling any OS-application interactions</li>
+      <li class="fragment">Real workloads contain many interactions between processes and the OS which are sensitive to the modeling of time</li>
+    </ul>-->
+
+    <ul>
+      <li class="fragment">Specialized ways of selecting sampling units
+        <ul class="fragment">
+          <li>TaskPoint<sup>[1]</sup>: task regions in task-based programming models</li>
+          <li>BarrierPoint<sup>[2]</sup>: synchronization barriers</li>
+          <li>LoopPoint<sup>[3]</sup>: loop-based simulation markers</li>
+          <li>Aim to accurately embed behaviors seen in HPC-like workloads</li>
+        </ul>
+      </li>
+      <li class="fragment">Time-modeling for throughput oriented applications
+        <ul>
+          <li>COTSON<sup>[4]</sup>: model timers and IO devices alongside a functional simulation</li>
+          <li>SimFlex<sup>[5]</sup>: random sampling of throughput-oriented workloads with a timing model</li>
+        </ul>
+      </li>
+      <li class="fragment">No modern work attempting to analyze the viability of sampling for modern cloud workloads</li>
+    </ul>
+
+    <div class="verysmall fragment">
+      <p class="footnote">
+      [1]: T. Grass, et. al. TaskPoint: Sampled simulation of task-based programs. 2016 ISPASS<br />
+      [2]: T. E. Carlson, et. al., BarrierPoint: Sampled simulation of multi-threaded applications. 2014 ISPASS<br />
+      [3]: A. Sabu, et. al., LoopPoint: Checkpoint-driven Sampled Simulation for Multi-threaded Applications. 2022 HPCA<br />
+      [4]: E. Argollo, et. al. COTSon: infrastructure for full system simulation. SIGOPS 2009<br />
+      [5]: T. F. Wenisch, et. al. SimFlex: Statistical Sampling of Computer System Simulation. IEEE Micro 2006
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Trace-Oriented Sampling</h2>
+
+    <div class="center fragment">
+      <img width="60%" src="/assets/trace_oriented_sampling-8U3OdzYz.svg" />
+    </div>
+
+    <ul>
+      <li class="fragment">Remove execution-driven simulation from the picture</li>
+      <li class="fragment">Evaluate sampling error alone from the embedding strategy</li>
+      <li class="fragment">Compare representative vs random sampling</li>
+    </ul>
+    <!--
+    Before trying to do live sampling with time modeling, let's figure out what sampling methodology is required to extrapolate performance (not considering injection related errors).
+    Trace-oriented sampling methodology
+    How we attempt to evaluate sampling errors alone
+
+    Put a picture here - a long trace with trace statistics every X time, embed every trace slice, do clustering and extrapolation and figure out the sampling error
+    This gives us the most optimistic picture, but only can evaluate sampling errors
+    -->
+  </section>
+
+  <section>
+    <h2>Multithreaded Embeddings</h2>
+
+    <div class="center fragment">
+      <img width="80%" src="/assets/multithreaded_sampling-nT2Ndq-0.svg" />
+    </div>
+
+    <ul>
+      <li class="fragment">Aggregated embedding
+        <ul>
+          <li class="fragment">Capture SoC-level effects (cache pollution, inter-thread communication)</li>
+          <li class="fragment">Higher dimensionality, clustering might suffer</li>
+        </ul>
+      </li>
+      <li class="fragment">Per-core embedding
+        <ul>
+          <li class="fragment">Doesn't capture interactions between cores</li>
+        </ul>
+      </li>
+    </ul>
+
+    <!--
+    Diagram of multicore activity and app threads being multiplexed onto each core.
+    Do we want to do a single-core oriented embedding and extrapolation, or do we need to account for thread interaction (cache pollution and sharing effects)? To what degree do we need a "SoC-level embedding"?
+    -->
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h1>Tracing @ Google</h1>
+  </section>
+
+  <section>
+    <h2>Tracing Technologies</h2>
+
+    <ul>
+      <li class="fragment"><a href="https://dynamorio.org/">DynamoRIO</a>
+        <ul>
+          <li class="fragment">Abstraction over low-level tracing APIs (e.g. Intel PIN / PT)</li>
+          <li class="fragment">Dynamic binary instrumentation tool</li>
+          <li class="fragment">Offline analysis of (PC + memory access) traces</li>
+        </ul>
+      </li>
+      <li class="fragment">DynamioRIO is used to trace server applications running in sandboxed setups with artificial traffic injection</li>
+      <li class="fragment">Large (~10-30x) application perturbation with full tracing enabled</li>
+    </ul>
+    <!--Abstraction over low-level tracing APIs (Intel PIN, Intel PT, ARM equivalent)
+    Dynamic instrumentation, extract PC/branch/memory traces (with substantial application perturbation)-->
+  </section>
+
+  <section>
+    <h2>DynamoRIO Traces</h2>
+    <!--
+    Attach picture of trace view with ifetch, branches, markers, and so forth
+    App-thread oriented traces, have to be reconstructed into core-oriented traces
+    -->
+
+    <pre class="fragment" style="font-size: 0.4rem;"><code class="language-text" data-trim data-noescape>
+$ bin64/drrun -t drmemtrace -tool view -indir drmemtrace.*.dir -sim_refs 20
+Output format:
+record       instr         tid        record details
+------------------------------------------------------------
+           1           0:     3256418 marker: version 6
+           2           0:     3256418 marker: filetype 0x240
+           3           0:     3256418 marker: cache line size 64
+           4           0:     3256418 marker: chunk instruction count 1024
+           5           0:     3256418 marker: page size 4096
+           6           0:     3256418 marker: timestamp 13312410768080478
+           7           0:     3256418 marker: tid 3256418 on core 7
+           8           1:     3256418 ifetch       3 byte(s) @ 0x00007fc205a61940 48 89 e7             mov    %rsp, %rdi
+           9           2:     3256418 ifetch       5 byte(s) @ 0x00007fc205a61943 e8 b8 0c 00 00       call   $0x00007fc205a62600
+          10           2:     3256418 write        8 byte(s) @ 0x00007fff9a9e3528 by PC 0x00007fc205a61943
+          11           3:     3256418 ifetch       1 byte(s) @ 0x00007fc205a62600 55                   push   %rbp
+          12           3:     3256418 write        8 byte(s) @ 0x00007fff9a9e3520 by PC 0x00007fc205a62600
+          13           4:     3256418 ifetch       3 byte(s) @ 0x00007fc205a62601 48 89 e5             mov    %rsp, %rbp
+          14           5:     3256418 ifetch       2 byte(s) @ 0x00007fc205a62604 41 57                push   %r15
+          15           5:     3256418 write        8 byte(s) @ 0x00007fff9a9e3518 by PC 0x00007fc205a62604
+          16           6:     3256418 ifetch       2 byte(s) @ 0x00007fc205a62606 41 56                push   %r14
+          17           6:     3256418 write        8 byte(s) @ 0x00007fff9a9e3510 by PC 0x00007fc205a62606
+          18           7:     3256418 ifetch       2 byte(s) @ 0x00007fc205a62608 41 55                push   %r13
+          19           7:     3256418 write        8 byte(s) @ 0x00007fff9a9e3508 by PC 0x00007fc205a62608
+          20           8:     3256418 ifetch       2 byte(s) @ 0x00007fc205a6260a 41 54                push   %r12
+    </pre></code>
+
+    <ul>
+      <li class="fragment">Application-thread-oriented traces</li>
+      <li class="fragment">Captures all userspace fetches, memory accesses, syscalls, control transfers</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Published Memtraces</h2>
+
+    <ul>
+      <li class="fragment">Google has published <a href="https://dynamorio.org/google_workload_traces.html">traces for 4 workloads</a></li>
+      <li class="fragment">Some information is stripped / degraded
+        <ul>
+          <li class="fragment">Instruction encodings / source binary / inst dependencies</li>
+          <li class="fragment">Syscalls and syscall numbers</li>
+          <li class="fragment">Timestamps (limited availability and accuracy)</li>
+        </ul>
+      <li class="fragment">Some information is unavailable due to limitations in DynamoRIO
+        <ul>
+          <li class="fragment">IO activity and when earliest thread resumption is possible</li>
+          <li class="fragment">Kernel space activity</li>
+          <li class="fragment">Inter-thread dependencies / communication</li>
+        </ul>
+      </li>
+    </ul>
+    <!--
+    Show the memtraces we have access to. Not including the internal ones at Google.
+    What info is missing? Inst encodings, exact syscall reasons, IO activity
+    -->
+  </section>
+
+  <section>
+    <h2>Trace-Driven Sampling Investigation</h2>
+
+    <p>We wish to answer some questions</p>
+
+    <ul>
+      <li class="fragment">What embedding strategy (core-oriented vs SoC-level) works well for Google traces?</li>
+      <li class="fragment">How do we extract meaningful metrics that we can predict from the trace?
+        <ul>
+          <li class="fragment">IPC is iffy due to timestamp granularity (10s of us)</li>
+          <li class="fragment">Cache/BP statistics from PMU are unavailable, but reconstructible to some degree</li>
+        </ul>
+      </li>
+      <li class="fragment">How stable are the chosen simpoints under varying scheduling behaviors?</li>
+    </ul>
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h1>The TraceKit Framework</h1>
+  </section>
+
+  <section>
+    <h2>TraceKit Overview</h2>
+
+    <div class="center fragment">
+      <img width="100%" src="/assets/tracekit_overview-BNQf-M0J.svg" />
+    </div>
+
+    <ul>
+      <li class="fragment">Unify trace-level analysis for DR and Berkeley simulation flows</li>
+      <li class="fragment">Lightweight abstraction over ISAs (x86, ARM, RISC-V)</li>
+      <li class="fragment">Evolving this framework for live sampled simulation using RTL sim</li>
+    </ul>
+    <!--
+    Unifying trace analysis for trace-oriented and execution-driven simulation flows.
+    Abstraction over ISAs too.
+    Diagram of TraceKit ingesting DynamoRIO traces with a scheduler onto a core-oriented model + direct ingestion of spike/RTL sim/FireSim traces
+    Analysis passes are also included
+    Later flow for live sampled simulation with time feedback
+    -->
+  </section>
+
+  <section>
+    <h2>The "Scheduler"</h2>
+
+    <div class="center">
+      <img width="80%" src="/assets/scheduler_overview-CZjTT7fj.svg" />
+    </div>
+
+    <ul>
+      <li class="fragment">To cope with differences in the number of modeled cores vs cores used in the captured trace</li>
+      <li class="fragment">Can force more aggressive thread interleaving and idle time hole-filling with scheduler-driven preemption and mounting</li>
+    </ul>
+
+    <!--
+    - Analysis framework
+    - Diagram of how it integrates
+    - Diagram of the scheduler
+    - Diagram of how to unify it with TidalSim execution driven flow
+    - Plans for evaluating trace-driven vs execution-driven simulation sampling and validity
+    -->
+  </section>
+
+  <section>
+    <h2>Limitations</h2>
+
+    <ul>
+      <li class="fragment">Traces are fixed! uArch changes can't be incorporated without recapturing.</li>
+      <li class="fragment">uArch changes that impact time-dependent behavior can't be modeled</li>
+    </ul>
+
+    <p class="center fragment">However, we can evaluate sampling techniques (assuming perfect detailed simulation)</p>
+  </section>
+
+  <section>
+    <h2>Experiments</h2>
+
+    <ul>
+      <li class="fragment">Investigating different embedding strategies
+        <ul>
+          <li class="fragment">Basic block vectors</li>
+          <li class="fragment">Instruction mix: loads, stores, control, arith, integer, fp</li>
+          <li class="fragment">ILP: in varying window sizes (32, 64, ...)</li>
+          <li class="fragment">Register traffic: avg input operands, register consumption, register dependency chains</li>
+          <li class="fragment">Working set: number of unique 32B/4K blocks touched in an interval</li>
+          <li class="fragment">Data stream strides: measure of spatial locality in temporal memory accesses</li>
+          <li class="fragment">Branch predictability: use an upper-limit branch prediction algorithm</li>
+        </ul>
+      </li>
+      <li class="fragment">Implementation of trace analysis framework over published and internal Google DR traces</li>
+      <li class="fragment">Comparing accuracy of trace-based scheduler vs execution-driven scheduler changes</li>
+      <li class="fragment">Results are pending publication</li>
+    </ul>
+    <!--Results: to be released soon. Uncovered lots of weirdnesses already. Initial indication is that BBVs and core-level embedding might be sufficient.-->
+  </section>
+</section>
+
+<section>
+  <h2>Conclusion</h2>
+
+  <div class="container" style="grid-template-columns: 1fr 2fr;">
+    <img class="image" width="100%" src="/assets/overview-_bAKuIOR.svg" />
+    <!--<img class="image" width="100%" src="./figs/dynamic/tidalsim/full_flow_detail.svg" />-->
+    <img class="image" width="100%" src="/assets/tracekit_overview-BNQf-M0J.svg" />
+  </div>
+
+  <div class="center">
+  </div>
+
+  <ul class="smallish">
+    <li class="fragment">Tidalsim provides fast, accurate, low-latency RTL-sim-based sampled simulation</li>
+    <li class="fragment">Ongoing work to leverage Google workload traces for sampling investigation</li>
+    <li class="fragment">TraceKit is a unified trace analysis framework that will be merged with Tidalsim for a multicore live sampling flow</li>
+    <!--<li class="fragment">We need fast, low-startup-latency RTL-level simulation</li>
+    <li class="fragment">We propose a simulation methodology based on sampled RTL simulation
+      <ul>
+        <li>Small intervals + functional warmup with RTL simulation</li>
+      </ul>
+    </li>
+    <li class="fragment">Everything is open source
+      <ul><li><a href="https://github.com/euphoric-hardware/tidalsim">TidalSim (github.com/euphoric-hardware/tidalsim)</a> <small>Forks of spike, chipyard, testchipip + top-level runner</small></li></ul>
+    </li>
+    -->
+  </ul>
+</section>
+
+<section>
+  <section class="center">
+    <h1>Extra Slides</h1>
+  </section>
+
+  <section>
+    <h2>Existing Sampling Techniques</h2>
+
+    <div class="container" style="grid-template-columns: 1fr 1fr;">
+    <div>
+    <h3 class="center fragment">SimPoint</h3>
+    <div class="fragment image no-padding" style="display:grid; align-content: center; justify-items:center; grid-template-columns:1fr 1fr;">
+      <img class="no-margin" style="display:grid;" src="/assets/simpoint-gzip_phases-DMSJez3j.gif" />
+      <img class="no-margin" style="display:grid;" src="/assets/simpoint-gcc_phases-B9RmjtbA.gif" />
+    </div>
+    <ul class="small">
+      <li class="fragment">Workloads can be split into <strong style="text-decoration:underline;">phases</strong> that exhibit similar μArch behavior</li>
+      <li class="fragment">SimPoint-style representative sampling
+        <ul class="fragment">
+          <li>Compute an embedding for each program interval (e.g. blocks of 100M instructions)</li>
+          <li>Cluster interval embeddings using k-means</li>
+          <li>Choose representative intervals from each cluster as <em>sampling units</em></li>
+        </ul>
+      </li>
+    </ul>
+    </div>
+    <div>
+      <h3 class="center fragment">SMARTS</h3>
+      <img class="fragment image no-margin no-padding" src="/assets/smarts-DF7IXd20.png" />
+      <ul class="small">
+        <li class="fragment">If we sample from a population, we can estimate the population mean</li>
+        <!--<li class="fragment">Rigorous statistical sampling enables computation of confidence bounds
+          <ul class="fragment">
+            <li>Use random sampling on a full execution trace to derive a population sample</li>
+            <li>Central limit theorem provides confidence bounds</li>
+          </ul>
+        </li>-->
+        <li class="fragment">SMARTS-style random sampling
+          <ul class="fragment">
+            <li>Pick a large number of samples to take before program execution</li>
+            <li>If the sample variance is too high after simulation, then collect more sampling units</li>
+            <li>Use CLT to derive a confidence bound for the aggregate performance metric</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    </div>
+
+    <p class="center fragment"><strong>Our proposal</strong>: Combine SimPoint-style representative sampling with SMARTS-style small intervals</p>
+  </section>
+
+  <section>
+    <h2>Implementation Details For TidalSim</h2>
+    <div class="container" style="grid-template-columns: 1.2fr 1fr;">
+    <div>
+    <ul class="smallish">
+      <li class="fragment">Basic block identification
+        <ul><li>BB identification from spike commit log or from static ELF analysis</li></ul>
+      </li>
+      <li class="fragment">Basic block embedding of intervals</li>
+      <li class="fragment">Clustering and checkpointing
+        <ul>
+          <li>k-means, PCA-based n-clusters</li>
+          <li>spike-based checkpoints</li>
+        </ul>
+      </li>
+      <li class="fragment">RTL simulation and performance metric extraction
+        <ul><li>Custom force-based RTL state injection, out-of-band IPC measurement</li></ul>
+      </li>
+      <li class="fragment">Extrapolation
+        <ul><li>Estimate IPC of each interval based on its embedding and distances to RTL-simulated intervals</li></ul>
+      </li>
+    </ul>
+    </div>
+    <div style="display:grid; align-content: center;">
+      <img class="image no-margin" src="/assets/overview-_bAKuIOR.svg" />
+    </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Memory Timestamp Record</h2>
+    <div class="center">
+      <img class="image" src="/assets/mtr_flow-Dfj5AQpN.svg" />
+    </div>
+
+    <ul class="small">
+      <li class="fragment">Construct MTR table from a memory trace, save MTR tables at checkpoint times</li>
+      <li class="fragment">Given a cache with n sets, group block addresses by set index</li>
+      <li class="fragment">Given a cache with k ways, pick the k most recently accessed addresses from each set</li>
+      <li class="fragment">Knowing every resident cache line, fetch the data from the DRAM dump</li>
+    </ul>
+  </section>
+
+</section>
+
+        </div>
+    </div>
+
+  </body>
+</html>
