@@ -7,10 +7,10 @@
     <meta name="author" content="Vighnesh Iyer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <script type="module" crossorigin src="/assets/2024_08-athlete-tidalsim_tracekit-BPqsjWil.js"></script>
+        <script type="module" crossorigin src="/assets/2024_08-athlete-tidalsim_tracekit-B89fzOWF.js"></script>
         <link rel="modulepreload" crossorigin href="/assets/reveal.esm-FLSLtKfW.js">
         <link rel="stylesheet" crossorigin href="/assets/reveal-BCbOiT2X.css">
-        <link rel="stylesheet" crossorigin href="/assets/tokyonight-light-CeXeHkff.css">
+        <link rel="stylesheet" crossorigin href="/assets/tokyonight-light-BgAoksBk.css">
         <link rel="stylesheet" crossorigin href="/assets/tokyo-night-dark-D_WlnMIb.css">
       </head>
 
@@ -472,6 +472,40 @@ record       instr         tid        record details
       <!--<li class="fragment">Results are pending publication</li>-->
     </ul>
     <!--Results: to be released soon. Uncovered lots of weirdnesses already. Initial indication is that BBVs and core-level embedding might be sufficient.-->
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h2>Questions</h2>
+  </section>
+
+  <section>
+    <h2>Things I'd Like to Know</h2>
+
+    <ul>
+      <li class="fragment">What type of performance models are used (trace-driven vs execution-based)?
+        <ul>
+          <li>What approaches to sampling are used?</li>
+          <li>Trace-based sampling</li>
+          <li>Multithreaded sampling</li>
+        </ul>
+      </li>
+      <li class="fragment">Post-silicon tracing
+        <ul>
+          <li>Virtual memory handling / ASLR</li>
+          <li>Context switches / OS activity</li>
+          <li>BW requirements per hardware thread</li>
+          <li>External devices</li>
+          <li>DMAs / Timers</li>
+          <li>HW events in trace / time resolution</li>
+          <li>Dynamic on/off</li>
+          <li>Any SW instrumentation required? How much analysis is done host-side vs on-chip?</li>
+        </ul>
+      </li>
+      <li class="fragment">Boundary IO capture</li>
+      <li class="fragment">How to model time-dependent behavior given a fixed trace?</li>
+    </ul>
   </section>
 </section>
 
